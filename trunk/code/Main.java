@@ -16,14 +16,17 @@ public class Main {
 				"print ( ID4 + (4*ID5)) \n " +
 				"end";
 		
-		Tokenizer t = new Tokenizer();
-		ArrayList<String> s = t.tokenize(test);
+		//Tokenizer t = new Tokenizer();
+		//ArrayList<String> s = t.tokenize(test);
 		
-		for(int i = 0; i < s.size(); i++)
-		{
-			System.out.println(s.get(i));
-		}
-				
+		//for(int i = 0; i < s.size(); i++)
+		//{
+		//	System.out.println(s.get(i));
+		//}
+
+        // create parser
+        // interpret parser output
+        // get and display tree				
 
 	}
 
