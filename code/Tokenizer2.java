@@ -26,9 +26,12 @@ public class Tokenizer2 {
 
         Token token = null;
 
+		System.out.println("TESTING");
+
         while (tokenizer.hasNext()) {
-            token = tokenizer.next(); 
-            System.out.println(token.getValue());
+        	//System.out.println("hasnext");
+            token = tokenizer.next();
+            System.out.println("token: " + token.getValue());
         }
 
     }
@@ -38,20 +41,71 @@ public class Tokenizer2 {
         int iTokenLength = -1;
 
         // char we're currently looking at
-        char curr = this.sProgram.charAt(index);
+        char curr;
+        String sToken = "";
 
-        // if our current char is one of these by-themselves tokens, we've found our token
-        if (curr == '(' || curr == ')' || curr == ',' || curr == ';' || curr == '+' || curr == '-') {
-            token = new Token(String.valueOf(curr), Token.TokenType.KEYWORD);
-        }
-
-        iTokenLength = token.length();
-        index += iTokenLength;
+		while (token == null && this.hasNext()) {
+			//System.out.println("index = " + this.index);
+			
+			curr = this.sProgram.charAt(index);
+			//System.out.println(curr);
+			
+			if (sToken.length() > 0) {
+				if ((curr == '(') || (curr == ')') || (curr == ',') || (curr == ';') || (curr == '+') || (curr == '-') ||
+					(curr == ':') || (curr == '=') || (curr == '*') || (curr == ' ') || (curr == '\n') || (curr == '\t')) {
+					// we were building a token and came upon a reserved character which means the end of our token
+					// so create the token but don't increment the index -- keep index here so can resume next time
+					
+					// create token from whatever string we've amassed
+					token = new Token(sToken);
+					// reset the token temp holder
+					sToken = null;
+				} else {
+		        	// keep collecting chars, expecting them to become something wonderful
+		        	sToken += String.valueOf(curr);
+		        	this.index += 1;	        	
+		        }
+			} else {
+				if (curr == '(' || curr == ')' || curr == ',' || curr == ';' || curr == '+' || curr == '-') {
+					// if our current char is one of these by-themselves tokens, we've found our token
+		            token = new Token(String.valueOf(curr));
+		            this.index += 1;
+		        } else if ((curr == ':') && (this.sProgram.charAt(index+1) == '=')) {
+		        	// if we have a :, it must be followed by a =
+		        	token = new Token(":=");
+		        	this.index += 2;
+		        } else if ((curr == '*') && (this.sProgram.charAt(index+1) == '*')) {
+		        	// check for ** before just * so don't get them confused
+		        	token = new Token("**");
+		        	this.index += 2;
+		        } else if (curr == '*') {
+		        	// now check for * after **
+		        	token = new Token("*");
+		        	this.index += 1;
+		        } else if ((curr == ' ') || (curr == '\n') || (curr == '\t')) {
+		        	// ignore whitespace
+		        	this.index += 1;
+		        } else {
+		        	// keep collecting chars, expecting them to become something wonderful
+		        	sToken += String.valueOf(curr);
+		        	this.index += 1;	        	
+		        }
+			}	        
+	         
+		}
+		
+		if (!this.hasNext() && sToken.length() > 0) {
+			// create token from whatever string we've amassed
+			token = new Token(sToken);
+			// reset the token temp holder
+			sToken = null;
+		}
+		
         return token;
     }
 
     public boolean hasNext() {
-        return (index < iProgramLength);
+        if (this.index < this.iProgramLength) { return true; } else { return false; }
     }
 
 }
