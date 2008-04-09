@@ -1,88 +1,84 @@
 
 public class Parser {
 
+	//private AbstractSyntaxTree AST;
+	private Tokenizer tokenizer = null;
+	
     public Parser(String sProgram) {
-        Tokenizer tokenizer = new Tokenizer(sProgram);
+        this.tokenizer = new Tokenizer(sProgram);
     }
 
     // <Micro-program > -> begin <statement-list> end
-    public void microProgram() {
-        match("begin");
-        statementList();
-        match("end");
+    public boolean microProgram() {
+        return (match("begin") & statementList() & match("end"));
     }
 
-    // <statement-list> -> <statement> <statement-list’>
-    public void statementList() {
-        statement();
-        statementListPrime();
+    // <statement-list> -> <statement> <statement-list'>
+    public boolean statementList() {
+		return (statement() & statementListPrime());
     }
 
-    // <statement-list’> -> ; <statement-list>
-    // <statement-list’> -> ε
-    public void statementListPrime() {
+    // <statement-list'> -> ; <statement-list>
+    // <statement-list'> -> \epsilon
+    public boolean statementListPrime() {
         if (match(";")) {
-           statementList();
+			return statementList();
         } else {
-            // nothing
+			return true;
         }
     }
 
     // <statement> ->  print ( <exp-list> )
     // <statement> ->  ID := <exp>
-    public void statement() {
+    public boolean statement() {
         if (match("print")) {
-            match("(");
-            expList();
-            match(")");
+            return (match("(") & expList() & match(")"));
         } else {
-            matchID();
-            match(":=");
-            exp();
+        	// rollback
+            return (matchID() & match(":=") & exp());
         }
     }
 
-    // <exp-list> -> <exp> <exp-list’>
-    public void expList() {
-        exp();
-        expListPrime();
+    // <exp-list> -> <exp> <exp-list'>
+    public boolean expList() {
+        return (exp() & expListPrime());
     }
 
-    // <exp-list’> -> <exp-list>, <exp>
-    // <exp-list’> -> ε
-    public void expListPrime() {
+    // <exp-list'> -> <exp-list>, <exp>
+    // <exp-list'> -> \epsilon
+    public boolean expListPrime() {
         if (expList()) {
-            match(",");
-            exp();
+            return (match(",") & exp());
         } else {
-            // nothing
+        	// rollback
+        	// epsilon
+            return true;
         }
     }
 
-    // <exp> -> ( <exp> ) <exp’>
-    // <exp> ->  ID <exp’>
-    // <exp> -> INTNUM <exp’>
-    public void exp() {
+    // <exp> -> ( <exp> ) <exp'>
+    // <exp> ->  ID <exp'>
+    // <exp> -> INTNUM <exp'>
+    public boolean exp() {
         if (match("(")) {
-            exp();
-            match(")");
-            expPrime();
+            return  (exp() & match(")") & expPrime());
         } else if (matchID()) {
-            expPrime();
+            return expPrime();
         } else if (matchINTNUM()) {
-            expPrime();
+            return expPrime();
         } else {
             return false;
         }
     }
 
-    // <exp’> -> <bin-op> <exp>
-    // <exp’> -> ε
-    public void expPrime() {
+    // <exp'> -> <bin-op> <exp>
+    // <exp'> -> \epsilon
+    public boolean expPrime() {
         if (binOp()) {
-            exp();
+            return exp();
         } else {
-            // nothing
+        	// rollback
+            return true;
         }
     }
 
@@ -90,7 +86,7 @@ public class Parser {
     // <bin-op> ->  -
     // <bin-op> ->  *
     // <bin-op> ->  **  
-    public void binOp() {
+    public boolean binOp() {
         if (match("+")) {
 
         } else if (match("-")) {
@@ -100,28 +96,46 @@ public class Parser {
         } else if (match("**")) {
 
         }
+        return false;
     } 
 
     public boolean match(String s) {
-        
-        // get token from input stream (or array or whatever)
-        // check it with string class to make sure it looks the same
-        // increment index
-        // return result if matches
+    	System.out.println("Matching: " + s);
+    	boolean b = false;
+    	if (this.tokenizer.hasNext()) {
+    		Token t = this.tokenizer.next();
+    		if (s.equals(t.getValue())) {
+    			t.setType(Token.TokenType.KEYWORD);
+    			b = true;
+    		}
+    	}
+    	return b;
     }
 
     public boolean matchID() {
-        // get token from array list
-        // check to make sure of type ID
-        // increment index
-        // return result if matches
+    	System.out.println("Matching ID");
+    	boolean b = false;
+    	if (this.tokenizer.hasNext()) {
+    		Token t = this.tokenizer.next();
+    		if (this.tokenizer.isID(t.getValue())) {
+    			t.setType(Token.TokenType.ID);
+    			b = true;
+    		}
+    	}
+    	return b;
     }
 
     public boolean matchINTNUM() {
-        // get token from array list
-        // check to make sure of type INTNUM
-        // increment index
-        // return result if matches
+    	System.out.println("Matching INTNUM");
+    	boolean b = false;
+    	if (this.tokenizer.hasNext()) {
+    		Token t = this.tokenizer.next();
+    		if (this.tokenizer.isINTNUM(t.getValue())) {
+    			t.setType(Token.TokenType.INTNUM);
+    			b = true;
+    		}
+    	}
+    	return b;
     }
 
 }

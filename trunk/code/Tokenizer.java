@@ -4,6 +4,8 @@ public class Tokenizer {
     private int index = -1;
     private int iProgramLength = -1;
     private String sProgram = null;
+    
+    private Token prev = null;
 
     public Tokenizer(String sProgram) {
         this.index = 0;
@@ -11,6 +13,7 @@ public class Tokenizer {
         this.iProgramLength = sProgram.length();
     }
 
+/*
     public static void main(String[] args) {
 		String test = "begin \n " +
 				"ID := 6;" +
@@ -35,6 +38,8 @@ public class Tokenizer {
         }
 
     }
+    
+*/
 
     public Token next() {
         Token token = null;
@@ -106,6 +111,14 @@ public class Tokenizer {
 
     public boolean hasNext() {
         if (this.index < this.iProgramLength) { return true; } else { return false; }
+    }
+    
+    public boolean isID(String s) {
+    	return true;
+    }
+    
+    public boolean isINTNUM(String s) {
+    	return true;
     }
 
 }
