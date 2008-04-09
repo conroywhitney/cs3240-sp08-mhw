@@ -1,14 +1,14 @@
 
 public class Tokenizer {
 
-    private int index = -1;
+    private int index = 0;
+    private int prevIndex = 0;
     private int iProgramLength = -1;
     private String sProgram = null;
-    
-    private Token prev = null;
 
     public Tokenizer(String sProgram) {
         this.index = 0;
+        this.prevIndex = 0;
         this.sProgram = sProgram;
         this.iProgramLength = sProgram.length();
     }
@@ -48,6 +48,13 @@ public class Tokenizer {
         // char we're currently looking at
         char curr;
         String sToken = "";
+        
+        // index and prevIndex should always start the same
+        // if index is ahead of prevIndex, means we didn't consume the last token
+        // so reset index to prevIndex so we try matching the same token again "for the first time"
+        if (this.index > this.prevIndex) {
+        	this.index = this.prevIndex;
+        }
 
 		while (token == null && this.hasNext()) {
 			//System.out.println("index = " + this.index);
@@ -119,6 +126,10 @@ public class Tokenizer {
     
     public boolean isINTNUM(String s) {
     	return true;
+    }
+    
+    public void consume() {
+    	this.prevIndex = index;
     }
 
 }
