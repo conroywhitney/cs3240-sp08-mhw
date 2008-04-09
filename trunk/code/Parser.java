@@ -1,12 +1,8 @@
 
 public class Parser {
 
-    private ArrayList<String> tokens = null;
-    private int index = 0;
-
     public Parser(String sProgram) {
-        Tokenizer tokenizer = new Tokenizer();
-        tokens = tokenizer.tokenize(sProgram);
+        Tokenizer tokenizer = new Tokenizer(sProgram);
     }
 
     // <Micro-program > -> begin <statement-list> end
@@ -107,6 +103,7 @@ public class Parser {
     } 
 
     public boolean match(String s) {
+        
         // get token from input stream (or array or whatever)
         // check it with string class to make sure it looks the same
         // increment index
