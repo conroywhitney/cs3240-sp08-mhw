@@ -34,7 +34,6 @@ public class Parser {
         if (match("print")) {
             return (match("(") & expList() & match(")"));
         } else {
-        	// rollback
             return (matchID() & match(":=") & exp());
         }
     }
@@ -77,7 +76,6 @@ public class Parser {
         if (binOp()) {
             return exp();
         } else {
-        	// rollback
             return true;
         }
     }
@@ -87,52 +85,55 @@ public class Parser {
     // <bin-op> ->  *
     // <bin-op> ->  **  
     public boolean binOp() {
-        if (match("+")) {
-
-        } else if (match("-")) {
-
-        } else if (match("*")) {
-
-        } else if (match("**")) {
-
-        }
-        return false;
+        return ((match("**")) || (match("*")) || (match("+")) || (match("-")));
     } 
 
     public boolean match(String s) {
-    	System.out.println("Matching: " + s);
+    	System.out.println("Trying to match: " + s);
     	boolean b = false;
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
     		if (s.equals(t.getValue())) {
     			t.setType(Token.TokenType.KEYWORD);
     			b = true;
+    			this.tokenizer.consume();
+    			System.out.println("consum'd: " + t.getValue());
+    		} else {
+    			System.out.println("fux'd");
     		}
     	}
     	return b;
     }
 
     public boolean matchID() {
-    	System.out.println("Matching ID");
+    	System.out.println("Trying to match ID");
     	boolean b = false;
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
     		if (this.tokenizer.isID(t.getValue())) {
     			t.setType(Token.TokenType.ID);
     			b = true;
+    			this.tokenizer.consume();
+    			System.out.println("consum'd: " + t.getValue());
+    		} else {
+    			System.out.println("fux'd");
     		}
     	}
     	return b;
     }
 
     public boolean matchINTNUM() {
-    	System.out.println("Matching INTNUM");
+    	System.out.println("Trying to match INTNUM");
     	boolean b = false;
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
     		if (this.tokenizer.isINTNUM(t.getValue())) {
     			t.setType(Token.TokenType.INTNUM);
     			b = true;
+    			this.tokenizer.consume();
+    			System.out.println("consum'd: " + t.getValue());
+    		} else {
+    			System.out.println("fux'd");
     		}
     	}
     	return b;
