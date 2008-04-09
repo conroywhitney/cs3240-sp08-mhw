@@ -1,11 +1,8 @@
-import java.util.*;
 
 public class Main {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
+		/*
 		String test = "begin \n " +
 				"ID := 6;" +
 				" ID2 := asdfas;" +
@@ -15,18 +12,20 @@ public class Main {
 				"ID6 := ID3 * ID2; " +
 				"print ( ID4 + (4*ID5)) \n " +
 				"end";
+		*/
 		
-		//Tokenizer t = new Tokenizer();
-		//ArrayList<String> s = t.tokenize(test);
+		String test = "begin ";
+		test += "var1 := 6;";
+		test += "var2 := 4;";
+		test += "var3 := var1 + var2 ";
 		
-		//for(int i = 0; i < s.size(); i++)
-		//{
-		//	System.out.println(s.get(i));
-		//}
+		Parser parser = new Parser(test);
+		
+		parser.microProgram();
 
         // create parser
-        // interpret parser output
-        // get and display tree				
+        // interpret parser output ??
+        // get and display tree ??		
 
 	}
 
