@@ -1,7 +1,6 @@
 
 public class Parser {
 
-	//private AbstractSyntaxTree AST;
 	private Tokenizer tokenizer = null;
 	
     public Parser(String sProgram) {
@@ -14,33 +13,42 @@ public class Parser {
     }
 
     // <Micro-program > -> begin <statement-list> end
-    public boolean microProgram() {
+    public TreeNode microProgram() {
     	System.out.println("\nmicroProgram");
-    	boolean b = true;
-        if (!match("begin", true)) {
-        	b = false;
-        }
+    	
+    	TreeNode rootNode = new TreeNode(null, "microProgram");
+    	
+    	rootNode.addChild(match("begin", true));
+                        
+        rootNode.addChild(statementList());
         
-        statementList();
+        rootNode.addChild(match("end", true));
         
-        if (!match("end", true)) {
-        	b = false;
-        }
-        return b;
+        return rootNode;
     }
 
     // <statement-list> -> <statement> <statement-list'>
-    public boolean statementList() {
+    public TreeNode statementList() {
     	System.out.println("\nstatementList");
-		return (statement() & statementListPrime());
+    	    	
+    	TreeNode node = new TreeNode("statementList");
+    	
+    	node.addChild(statement());
+    	
+    	node.addChild(statementListPrime());
+    	
+		return node;
     }
 
     // <statement-list'> -> ; <statement-list>
     // <statement-list'> -> \epsilon
-    public boolean statementListPrime() {
+    public TreeNode statementListPrime() {
     	System.out.println("\nstatementListPrime");
-        if (match(";")) {
-			return statementList();
+    	
+    	TreeNode node = new TreeNode("statementListPrime");
+    		
+        if (node.addChild(match(";"))) {
+			node.addChild(statementList());
         } else {
         	System.out.println("statementListPrime was EPSILON -- consuming tokens till ; or end");
         	
@@ -60,150 +68,214 @@ public class Parser {
         	}
         	
         	if (sCurrToken.equals(";")) {
-        		return statementListPrime();
+        		node = statementListPrime();
         	} else {
-				return true;        		
+				node = null;        		
         	}
         }
+        
+        return node;
     }
 
     // <statement> ->  print ( <exp-list> )
     // <statement> ->  ID := <exp>
-    public boolean statement() {
+    public TreeNode statement() {
     	System.out.println("\nstatement");
-        if (match("print")) {
-            return (match("(", true) && expList() && match(")", true));
-        } else if (matchID()) {
-        	return (match(":=", true) && exp());
+    	
+    	TreeNode node = new TreeNode("statement");
+    	
+        if (node.addChild(match("print"))) {
+            if (node.addChild(match("(", true))) {
+            	if (node.addChild(expList())) {
+            		node.addChild(match(")", true));
+            	}
+            }
+        } else if (node.addChild(matchID())) {
+        	if (node.addChild(match(":=", true))) {
+        		node.addChild(exp());
+        	}
         } else {
         	// error
         	error(this.tokenizer.next());
-        	return false;
+        	// TODO: do i need to consume ??
+        	node = new TreeNode(this.tokenizer.next(), "error");
         }
+        
+        return node;
     }
 
     // <exp-list> -> <exp> <exp-list'>
-    public boolean expList() {
+    public TreeNode expList() {
     	System.out.println("\nexpList");
-        return (exp() & expListPrime());
+    	
+    	TreeNode node = new TreeNode("expList");
+
+		node.addChild(exp());
+		
+		node.addChild(expListPrime());
+    	
+        return node;
     }
 
     // <exp-list'> -> <exp-list>, <exp>
     // <exp-list'> -> \epsilon
-    public boolean expListPrime() {
+    public TreeNode expListPrime() {
     	System.out.println("\nexpListPrime");
-        if (match(",")) {
-            return expList();
+    	
+    	TreeNode node = new TreeNode("expListPrime");
+    	    	
+        if (node.addChild(match(","))) {
+            node.addChild(expList());
         } else {
         	System.out.println("expListPrime was EPSILON");
         	// epsilon
-            return true;
+            node = null;
         }
+        
+        return node;
     }
 
     // <exp> -> ( <exp> ) <exp'>
     // <exp> -> ID <exp'>
     // <exp> -> INTNUM <exp'>
-    public boolean exp() {
+    public TreeNode exp() {
     	System.out.println("\nexp");
-    	// create node(null, "exp")
-        if (match("(")) {
-            return  (exp() & match(")", true) && expPrime());
-        } else if (matchINTNUM()) {
+    	
+    	TreeNode node = new TreeNode("exp");
+    	    	
+        if (node.addChild(match("("))) {
+        	if (node.addChild(exp()) & node.addChild(match(")", true))) {
+        		node.addChild(expPrime());
+        	}
+        } else if (node.addChild(matchINTNUM())) {
             return expPrime();            
-        } else if (matchID()) {
+        } else if (node.addChild(matchID())) {
             return expPrime();
         } else {
         	error(this.tokenizer.next());
-            return false;
-            // dump tree
-            // destroy node
+        	// TODO: do i need to consume ???
+            node = new TreeNode(this.tokenizer.next(), "error");
         }
+        
+        return node;
     }
 
     // <exp'> -> <bin-op> <exp>
     // <exp'> -> \epsilon
-    public boolean expPrime() {
+    public TreeNode expPrime() {
     	System.out.println("\nexpPrime");
-        if (binOp()) {
-            return exp();
+    	
+    	TreeNode node = new TreeNode("expPrime");
+    	
+        if (node.addChild(binOp())) {
+            node.addChild(exp());
         } else {
+        	// because can go to epsilon, set to null
+        	node = null;
         	System.out.println("expPrime was EPSILON");
-            return true;
         }
+        
+        return node;
     }
 
     // <bin-op> ->  +
     // <bin-op> ->  -
     // <bin-op> ->  *
     // <bin-op> ->  **  
-    public boolean binOp() {
+    public TreeNode binOp() {
     	System.out.println("\nbinOp");
-        return ((match("**")) || (match("*")) || (match("+")) || (match("-")));
+    	
+    	TreeNode node = new TreeNode("binOp");
+    	
+    	// short-circuit add them to node
+        if (!node.hasChildren()) { node.addChild(match("**")); }
+        if (!node.hasChildren()) { node.addChild(match("*")); }
+        if (!node.hasChildren()) { node.addChild(match("+")); }
+        if (!node.hasChildren()) { node.addChild(match("-")); }
+        
+        return node;
     } 
 
-	public boolean match(String s) {
+	public TreeNode match(String s) {
 		return match(s, false);
 	}
 
-    public boolean match(String s, boolean required) {
+    public TreeNode match(String s, boolean required) {
     	System.out.println("match: " + s);
-    	boolean b = false;
+    	
+    	// this method will return a TreeNode (auto null)
+    	TreeNode node = null;
+    	
     	if (this.tokenizer.hasNext()) {
+    		// get next token
     		Token t = this.tokenizer.next();
     		if (s.equals(t.getValue())) {
-    			t.setType(Token.TokenType.KEYWORD);
-    			b = true;
-    			this.tokenizer.consume();
+    			// if our token is what we expect to see
+    			t.setType(Token.TokenType.KEYWORD);    	
+    			// create a new KEYWORD token		
+    			node = new TreeNode(t, "keyword");
+    			// and consume the token from the tokenizer
+				this.tokenizer.consume();
     			System.out.println("consum'd: " + t.getValue());
     		} else {
+    			// not what we expected to see
     			if (required) {
+    				// if this was REQUIRED, then give them an error token
     				error(t);
     				this.tokenizer.consume();
+    				node = new TreeNode(t, "error");
     			}
     		}
     	}
-    	return b;
+    	
+    	return node;
     }
 
-	public boolean matchID() {
+	public TreeNode matchID() {
 		return matchID(false);
 	}
 	
-    public boolean matchID(boolean required) {
+    public TreeNode matchID(boolean required) {
     	System.out.println("matchID");
-    	boolean b = false;
+    	
+    	// this method will return a TreeNode (auto null)
+    	TreeNode node = null;
+    	
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
     		if (this.isID(t.getValue())) {
     			t.setType(Token.TokenType.ID);
-    			b = true;
+    			node = new TreeNode(t, "ID");
     			this.tokenizer.consume();
     			System.out.println("consum'd: " + t.getValue());
     		} else {
     			if (required) {
     				error(t);
+    				node = new TreeNode(t, "error");
     			}
     		}
     	}
-    	return b;
+    	
+    	return node;
     }
 
-    public boolean matchINTNUM() {
+    public TreeNode matchINTNUM() {
     	System.out.println("matchINTNUM");
-    	boolean b = false;
+    	
+    	TreeNode node = null;
+    	
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
     		if (this.isINTNUM(t.getValue())) {
     			t.setType(Token.TokenType.INTNUM);
-    			b = true;
+    			node = new TreeNode(t, "ID");
     			this.tokenizer.consume();
     			System.out.println("consum'd: " + t.getValue());
     		} else {
-    			System.out.println("fux'd");
+    			//System.out.println("fux'd");
     		}
     	}
-    	return b;
+    	return node;
     }
     
     public boolean isID(String s) {

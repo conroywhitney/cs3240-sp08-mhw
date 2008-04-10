@@ -12,7 +12,11 @@ public class TreeNode {
 		children = new TreeNode[0];
 	}
 	
-	public void addChild(TreeNode node)
+	public TreeNode(String label) {
+		this(null, label);
+	}
+		
+	public boolean addChild(TreeNode node)
 	{
 		if(node != null)
 		{
@@ -23,7 +27,9 @@ public class TreeNode {
 		}		
 		temp[children.length] = node;		
 		children = temp;
+		return true;
 		}
+		return false;
 	}
 	
 	public void addLeftChild(TreeNode node)
@@ -31,7 +37,7 @@ public class TreeNode {
 		if(node != null)
 		{
 		TreeNode[] temp = new TreeNode[children.length + 1];		
-		for(int i = 1; i < children.length + 1; i ++)
+		for(int i = 1; i < children.length; i ++)
 		{
 			temp[i] = children[i];
 		}		
@@ -46,6 +52,7 @@ public class TreeNode {
 		
 		for(int i = 0; i < getChildren().length; i++)
 		{
+			System.out.println(getChildren()[i]);
 			s += getChildren()[i].getLabel() + " ";
 		}
 		
@@ -128,10 +135,14 @@ public class TreeNode {
 		}
 		else if(label.equals("exp"))
 		{
-			if(children.length == 2)
+			if(children.length == 3)
 			{
 				root = children[1].getAST();
-				root.addChild(children[0].getAST());
+			}
+			else if (children.length == 4)
+			{
+				root = children[3].getAST();
+				root.addChild(children[1].getAST());				
 			}
 			else
 			{
@@ -172,6 +183,10 @@ public class TreeNode {
 
 	public TreeNode[] getChildren() {
 		return children;
+	}
+	
+	public boolean hasChildren() {
+		return (children.length > 0);
 	}
 
 	public void setChildren(TreeNode[] children) {

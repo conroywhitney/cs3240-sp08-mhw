@@ -28,7 +28,10 @@ public class Main {
 		
 		Parser parser = new Parser(test);
 		
-		parser.microProgram();
+		TreeNode parserNodes = parser.microProgram();
+		
+		AbstractSyntaxTree tree = new AbstractSyntaxTree(parserNodes);
+		System.out.println(tree.getAST().toString());
 		
 		//System.out.println(parser.isID("_some_Test2_"));
 
