@@ -58,12 +58,12 @@ public class TreeNode {
 	
 	public String toString()
 	{
-		String s = "( " + getLabel() + " ";
+		String s = "( " + getDisplay() + " ";
 		
 		for(int i = 0; i < getChildren().length; i++)
 		{
 			//System.out.println(getChildren()[i]);
-			s += getChildren()[i].getLabel() + " ";
+			s += getChildren()[i].getDisplay() + " ";
 		}
 		
 		s += ") \n";
@@ -177,6 +177,17 @@ public class TreeNode {
 
 	public String getLabel() {
 		return label;
+	}
+
+	// the name to be displayed when printint out
+	// for things without token, want label
+	// for things with token, want token value
+	private String getDisplay() {
+		if (this.token == null) {
+			return this.getLabel();
+		} else {
+			return this.token.getValue();
+		}
 	}
 
 	public void setLabel(String label) {

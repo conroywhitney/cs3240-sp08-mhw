@@ -170,9 +170,9 @@ public class Parser {
 				}
         	}
         } else if (node.addChild(matchINTNUM())) {
-            return expPrime();            
+            node.addChild(expPrime());
         } else if (node.addChild(matchID())) {
-            return expPrime();
+            node.addChild(expPrime());
         } else {
             node = new TreeNode(this.tokenizer.next(), "error");
         	error(this.tokenizer.next());
@@ -302,6 +302,9 @@ public class Parser {
     				node = new TreeNode(t, "error");
     				error(t);
 					// TODO: do we need to consume this now ?? methinks ...
+					// TODO: how about till the end of sentence ??
+					// TODO: or maybe the person trying to match this should figure that out ...
+					// TODO: so maybe the addChild returning NULL for error nodes is not a good idea
     			}
     		}
     	}
@@ -323,7 +326,7 @@ public class Parser {
     		Token t = this.tokenizer.next();
     		if (this.isINTNUM(t.getValue())) {
     			t.setType(Token.TokenType.INTNUM);
-    			node = new TreeNode(t, "ID");
+    			node = new TreeNode(t, "INTNUM");
     			this.tokenizer.consume();
     			System.out.println("consum'd: " + t.getValue());
     		} else {
