@@ -62,7 +62,6 @@ public class TreeNode {
 		
 		for(int i = 0; i < getChildren().length; i++)
 		{
-			//System.out.println(getChildren()[i]);
 			s += getChildren()[i].getDisplay() + " ";
 		}
 		
@@ -94,7 +93,7 @@ public class TreeNode {
 			if(children.length == 2) //if statementListPrime != null
 			{
 				root = children[1].getAST(); // ast of statementListPrime
-				root.addLeftChild(children[0].getAST());//ast of statement
+				root.addChild(children[0].getAST());//ast of statement
 			}
 			else
 			{
@@ -118,6 +117,7 @@ public class TreeNode {
 			}
 			else
 			{
+				// <statement>  -->  ID := <exp>
 				root = children[1]; //  ':='
 				root.addChild(children[0]); // ID
 				root.addChild(children[2].getAST()); // ast of exp
@@ -130,8 +130,8 @@ public class TreeNode {
 				root = children[1].getAST();
 				root.addChild(children[0].getAST());
 			}
-			else
-			{
+			else	// exp-list' to epsilon
+			{	
 				root = children[0].getAST();
 			}
 		}
@@ -145,18 +145,25 @@ public class TreeNode {
 		}
 		else if(label.equals("exp"))
 		{
-			if(children.length == 3)
+			if(children.length == 2)
 			{
+				//<exp> -->  ID <exp’>
+				//<exp> -->  INTNUM <exp’>
 				root = children[1].getAST();
+				root.addChild(children[0]); // ID or INTNUM
 			}
 			else if (children.length == 4)
 			{
+				// <exp>  -->  ( <exp> ) <exp’>
+				// TODO: are we sure it's not 1, 3 ?
 				root = children[3].getAST();
 				root.addChild(children[1].getAST());				
 			}
-			else
+			else		
 			{
-				root = children[0].getAST();
+				// This is when expPrime has gone to EPSILON
+				// aka -- the right-side of an := 
+				root = children[0];
 			}
 		}
 		else if(label.equals("expPrime"))
