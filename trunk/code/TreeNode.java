@@ -62,7 +62,7 @@ public class TreeNode {
 		
 		for(int i = 0; i < getChildren().length; i++)
 		{
-			System.out.println(getChildren()[i]);
+			//System.out.println(getChildren()[i]);
 			s += getChildren()[i].getLabel() + " ";
 		}
 		
