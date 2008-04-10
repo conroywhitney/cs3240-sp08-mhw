@@ -6,8 +6,8 @@ public class Main {
 		
 		String test = "begin \n " +
 				"ID := 6;" +
-				" ID2 := asdfas;" +
-				" ID3:=4+2; " +
+				"ID2 := asdfas;" +
+				"ID3:= 4+2; " +
 				"ID4 :=5-ID4; " +
 				"ID5:=4**3; " +
 				"ID6 := ID3 * ID2; " +
