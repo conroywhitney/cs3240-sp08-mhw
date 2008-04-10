@@ -1,55 +1,38 @@
-import java.util.*;
 
 public class Tokenizer {
 
-	//private ArrayList<String> terminals;
-
-    public Tokenizer() {
-
-    }
-
-    public static void main(String[] args) {
-        Tokenizer tokenizer = new Tokenizer();
-		String test = "begin \n " +
-				"ID := 6;" +
-				" ID2 := asdfas;" +
-				" ID3:=4+2; " +
-				"ID4 :=5-ID4; " +
-				"ID5:=4**3; " +
-				"ID6 := ID3 * ID2; " +
-				"print ( ID4 + (4*ID5)) \n " +
-				"end";
-        ArrayList<String> s = tokenizer.tokenize(test);
-        for(int i = 0; i < s.size(); i++)
-		{
-			System.out.println(s.get(i));
-		}
+	private TokenList tokens = null;
+	private int index;
+	private String program = null;
+	
+    public Tokenizer(String sProgram) {
+    	this.program = sProgram;
+		this.tokens = new TokenList();
+		this.index = 0;
     }
 	
-	public ArrayList<String> tokenize(String program) {
-		ArrayList<String> tokens = new ArrayList<String>();
+	public void tokenize() {
 		int currentChar = 0;
-		char curr = program.charAt(currentChar);
+		char curr = this.program.charAt(currentChar);
 		String token = "";
 		
-		
-		while(currentChar < program.length())
+		while(currentChar < this.program.length())
 		{
 		  if(curr == '(' || curr == ')' || curr == ',' || curr == ';' || curr == '+' || curr == '-')
 		  {
 			  if(token.length() > 0) 
 			  	{ 
-				  tokens.add(token); 
+				  this.tokens.add(token); 
 				  token = "";
 			  	}
 			  String terminal = "" + curr;
-			  tokens.add(terminal);
+			  this.tokens.add(terminal);
 		  }
 		  else if(curr == ':')
 		  {
 			  if(token.length() > 0) 
 			  	{ 
-				  tokens.add(token);
+				  this.tokens.add(token);
 			  	}
 			  
 			  token = "" + curr;
@@ -59,7 +42,7 @@ public class Tokenizer {
 			  if(token.equals(":"))
 			  {
 				  token = token + "=";
-				  tokens.add(token); 
+				  this.tokens.add(token); 
 				  token = "";
 			  }
 			  
@@ -67,32 +50,32 @@ public class Tokenizer {
 			  {
 				  if(token.length() > 0) 
 				  { 
-					tokens.add(token); 
+					this.tokens.add(token); 
 					token = "";
 				  }
 				  String terminal = "" + curr;
-				  tokens.add(terminal);
+				  this.tokens.add(terminal);
 			  }
 		  }
 		  else if(curr == '*')
 		  {
 			  if(token.length() > 0) 
 			  { 
-				  tokens.add(token);
+				  this.tokens.add(token);
 				  token = "";
 			  }
 			  
-			  if(program.length() > currentChar + 1 && program.charAt(currentChar + 1) == '*')
+			  if(this.program.length() > currentChar + 1 && this.program.charAt(currentChar + 1) == '*')
 			  {
 				  token = "**";
-				  tokens.add(token);
+				  this.tokens.add(token);
 				  token = "";
 				  currentChar++;	  
 			  }
 			  else
 			  {
 				  token = "*";
-				  tokens.add(token);
+				  this.tokens.add(token);
 				  token = "";
 			  }
 			  
@@ -101,7 +84,7 @@ public class Tokenizer {
 		  {
 			  if(token.length() > 0) 
 			  	{ 
-				  tokens.add(token); 
+				  this.tokens.add(token); 
 				  token = "";
 			  	}
 		  }
@@ -110,22 +93,36 @@ public class Tokenizer {
 			  token = token + curr;
 		  }  
 		  currentChar++;
-		  if(currentChar < program.length())
+		  if(currentChar < this.program.length())
 		  {
-			  curr = program.charAt(currentChar);
+			  curr = this.program.charAt(currentChar);
 		  }
 		  else
 		  {
 			  if(token.length() > 0) 
 			  	{ 
-				  tokens.add(token); 
+				  this.tokens.add(token); 
 				  token = "";
 			  	}
 		  }
 		}
 		
-		
-		
-		return tokens;
+	}
+	
+	public Token next() {
+		// give them the token at the current index
+		// this will NOT consume a token, so other rules can check this same token
+		return this.tokens.get(this.index);
+	}
+	
+	public void consume() {
+		// consuming a token that they already have in hand
+		// simply increment our index so we don't consume that one again
+		this.index++;
+	}
+	
+	public boolean hasNext() {
+		// no more tokens if index is as long as the tokens list (aka, at end)
+		if (this.index < this.tokens.size()) { return true; } else { return false; }
 	}
 }
