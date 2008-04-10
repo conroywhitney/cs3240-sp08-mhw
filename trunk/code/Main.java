@@ -47,6 +47,11 @@ public class Main {
 		System.out.println(tree.toString());
 		System.out.println(tree.getAST().toString());
 		
+		System.out.println("IsINTNUM: " + parser.isINTNUM("123"));
+		System.out.println("IsINTNUM: " + parser.isINTNUM("0123"));
+		System.out.println("IsINTNUM: " + parser.isINTNUM("+123"));
+		System.out.println("IsINTNUM: " + parser.isINTNUM("-123"));
+		
 		//System.out.println(parser.isID("_some_Test2_"));
 
         System.out.println("Max Stack Size: " + parser.getMaxStackSize());

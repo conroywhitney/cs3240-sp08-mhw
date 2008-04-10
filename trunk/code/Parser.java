@@ -403,7 +403,9 @@ public class Parser {
 
 		// all characters have to be integers    	
     	for (int i = 0; i < arr.length; i++) {
-    		if (!isInt(arr[i])) {
+    		if ((i==0) && !((isInt(arr[i])) || (arr[i] == '-') || (arr[i] == '+'))) {
+    			b = false;
+    		} else if (!isInt(arr[i])) {
     			b = false;
     		}
     	}
