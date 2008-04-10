@@ -47,9 +47,9 @@ public class TreeNode {
 		if(node != null)
 		{
 		TreeNode[] temp = new TreeNode[children.length + 1];		
-		for(int i = 1; i < children.length; i ++)
+		for(int i = 1; i < children.length + 1; i++)
 		{
-			temp[i] = children[i];
+			temp[i] = children[i - 1];
 		}		
 		temp[0] = node;		
 		children = temp;
@@ -93,7 +93,7 @@ public class TreeNode {
 			if(children.length == 2) //if statementListPrime != null
 			{
 				root = children[1].getAST(); // ast of statementListPrime
-				root.addChild(children[0].getAST());//ast of statement
+				root.addLeftChild(children[0].getAST());//ast of statement
 			}
 			else
 			{
@@ -128,7 +128,7 @@ public class TreeNode {
 			if(children.length == 2)
 			{
 				root = children[1].getAST();
-				root.addChild(children[0].getAST());
+				root.addLeftChild(children[0].getAST());
 			}
 			else	// exp-list' to epsilon
 			{	
@@ -150,14 +150,14 @@ public class TreeNode {
 				//<exp> -->  ID <exp’>
 				//<exp> -->  INTNUM <exp’>
 				root = children[1].getAST();
-				root.addChild(children[0]); // ID or INTNUM
+				root.addLeftChild(children[0]); // ID or INTNUM
 			}
 			else if (children.length == 4)
 			{
 				// <exp>  -->  ( <exp> ) <exp’>
 				// TODO: are we sure it's not 1, 3 ?
 				root = children[3].getAST();
-				root.addChild(children[1].getAST());				
+				root.addLeftChild(children[1].getAST());				
 			}
 			else		
 			{

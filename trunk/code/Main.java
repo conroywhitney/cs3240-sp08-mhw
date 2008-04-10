@@ -30,7 +30,7 @@ public class Main {
 
 		String awesomeTest_fuckYeah = "begin ";
 		awesomeTest_fuckYeah += "awesome := sauce;";
-		awesomeTest_fuckYeah += "fuck := yeah;";
+		awesomeTest_fuckYeah += "print(fuck, yeah);";
 		awesomeTest_fuckYeah += "meaning_of_life_the_universe_and_everything := 42 ";
 		awesomeTest_fuckYeah += "end";		
 		
@@ -39,7 +39,7 @@ public class Main {
 		TreeNode parserNodes = parser.microProgram();
 		
 		AbstractSyntaxTree tree = new AbstractSyntaxTree(parserNodes);
-		//System.out.println(tree.toString());
+		System.out.println(tree.toString());
 		System.out.println(tree.getAST().toString());
 		
 		//System.out.println(parser.isID("_some_Test2_"));
