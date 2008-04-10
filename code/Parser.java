@@ -6,6 +6,7 @@ public class Parser {
 	
     public Parser(String sProgram) {
         this.tokenizer = new Tokenizer(sProgram);
+        this.tokenizer.tokenize();
     }
 
     // <Micro-program > -> begin <statement-list> end
@@ -110,7 +111,7 @@ public class Parser {
     	boolean b = false;
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
-    		if (this.tokenizer.isID(t.getValue())) {
+    		if (this.isID(t.getValue())) {
     			t.setType(Token.TokenType.ID);
     			b = true;
     			this.tokenizer.consume();
@@ -127,7 +128,7 @@ public class Parser {
     	boolean b = false;
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
-    		if (this.tokenizer.isINTNUM(t.getValue())) {
+    		if (this.isINTNUM(t.getValue())) {
     			t.setType(Token.TokenType.INTNUM);
     			b = true;
     			this.tokenizer.consume();
@@ -137,6 +138,14 @@ public class Parser {
     		}
     	}
     	return b;
+    }
+    
+    private boolean isID(String s) {
+    	return true;
+    }
+    
+    private boolean isINTNUM(String s) {
+    	return true;
     }
 
 }
