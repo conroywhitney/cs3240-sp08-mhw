@@ -3,6 +3,9 @@ public class Parser {
 
 	private Tokenizer tokenizer = null;
 	
+	private int iMaxStack = 0;
+	private int iCurrStack = 0;
+	
     public Parser(String sProgram) {
         this.tokenizer = new Tokenizer(sProgram);
         this.tokenizer.tokenize();
@@ -15,6 +18,7 @@ public class Parser {
     // <Micro-program > -> begin <statement-list> end
     public TreeNode microProgram() {
     	System.out.println("\nmicroProgram");
+    	incrementStackCounter();
     	
 		// create original root node for Parse Tree
     	TreeNode rootNode = new TreeNode("microProgram");
@@ -26,12 +30,14 @@ public class Parser {
         
         rootNode.addChild(match("end", true));
         
+        decrementStackCounter();
         return rootNode;
     }
 
     // <statement-list> -> <statement> <statement-list'>
     public TreeNode statementList() {
     	System.out.println("\nstatementList");
+    	incrementStackCounter();
     	    	
     	TreeNode node = new TreeNode("statementList");
     	
@@ -39,6 +45,7 @@ public class Parser {
     	
     	node.addChild(statementListPrime());
     	
+    	decrementStackCounter();
 		return node;
     }
 
@@ -46,6 +53,7 @@ public class Parser {
     // <statement-list'> -> \epsilon
     public TreeNode statementListPrime() {
     	System.out.println("\nstatementListPrime");
+    	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("statementListPrime");
     	
@@ -87,6 +95,7 @@ public class Parser {
         	}
         }
         
+        decrementStackCounter();
         return node;
     }
 
@@ -94,6 +103,7 @@ public class Parser {
     // <statement> ->  ID := <exp>
     public TreeNode statement() {
     	System.out.println("\nstatement");
+    	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("statement");
     	
@@ -119,12 +129,14 @@ public class Parser {
 			// TODO: what about fast-forwarding ??
         }
         
+        decrementStackCounter();
         return node;
     }
 
     // <exp-list> -> <exp> <exp-list'>
     public TreeNode expList() {
     	System.out.println("\nexpList");
+    	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("expList");
 
@@ -132,6 +144,7 @@ public class Parser {
 		
 		node.addChild(expListPrime());
     	
+    	decrementStackCounter();
         return node;
     }
 
@@ -139,6 +152,7 @@ public class Parser {
     // <exp-list'> -> \epsilon
     public TreeNode expListPrime() {
     	System.out.println("\nexpListPrime");
+    	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("expListPrime");
 
@@ -151,6 +165,7 @@ public class Parser {
             node = null;
         }
         
+        decrementStackCounter();
         return node;
     }
 
@@ -159,6 +174,7 @@ public class Parser {
     // <exp> -> ID <exp'>
     public TreeNode exp() {
     	System.out.println("\nexp");
+    	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("exp");
     	    	
@@ -179,6 +195,7 @@ public class Parser {
         	// TODO: do i need to consume ???
         }
         
+        decrementStackCounter();
         return node;
     }
 
@@ -186,6 +203,7 @@ public class Parser {
     // <exp'> -> \epsilon
     public TreeNode expPrime() {
     	System.out.println("\nexpPrime");
+    	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("expPrime");
     	
@@ -197,6 +215,7 @@ public class Parser {
         	System.out.println("expPrime was EPSILON");
         }
         
+        decrementStackCounter();
         return node;
     }
 
@@ -206,21 +225,20 @@ public class Parser {
     // <bin-op> ->  **  
     public TreeNode binOp() {
     	System.out.println("\nbinOp");
+    	incrementStackCounter();
     	
-    	TreeNode node = new TreeNode("binOp");
+    	TreeNode node = null;
     	
     	// short-circuit add them to node
-        if (!node.hasChildren()) { node.addChild(match("**")); }
-        if (!node.hasChildren()) { node.addChild(match("*")); }
-        if (!node.hasChildren()) { node.addChild(match("+")); }
-        if (!node.hasChildren()) { node.addChild(match("-")); }
-
-		// if after so many attempts, no children, steralize him/her
-		if (!node.hasChildren()) { node = null; }
+        if (node == null) { node = match("**"); }
+        if (node == null) { node = match("*"); }
+        if (node == null) { node = match("+"); }
+        if (node == null) { node = match("-"); }
 
 		// TODO: can we somehow use this short-circuit add to perform the RHS of
 		// supporting 5 * -5 ???? consuming two tokens at once ??
         
+        decrementStackCounter();
         return node;
     } 
 
@@ -397,6 +415,20 @@ public class Parser {
     
     public boolean isAlpha(char c) {
     	return ( ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) );
+    }
+    
+    // used to keep track of maximum production-rule stack size
+    private void incrementStackCounter() {
+    	this.iCurrStack += 1;
+    	this.iMaxStack = (this.iCurrStack > this.iMaxStack) ? this.iCurrStack : this.iMaxStack;
+    }
+    // used to keep track of maximum production-rule stack size
+    private void decrementStackCounter() {
+    	this.iCurrStack -= 1;
+    }
+    
+    public int getMaxStackSize() {
+    	return this.iMaxStack;
     }
 
 }
