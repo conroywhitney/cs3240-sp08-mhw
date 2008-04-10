@@ -123,8 +123,12 @@ public class Parser {
         	}
         } else {
         	// error
-        	node = new TreeNode(this.tokenizer.next(), "error");
-        	error(this.tokenizer.next());
+        	if (this.tokenizer.hasNext()) {
+	        	node = new TreeNode(this.tokenizer.next(), "error");
+	        	error(this.tokenizer.next());        		
+        	} else {
+        		System.out.println("\t\tERROR in statement() but NO TOKEN");
+        	}
         	// TODO: do i need to consume ??
 			// TODO: what about fast-forwarding ??
         }

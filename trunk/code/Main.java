@@ -13,27 +13,31 @@ public class Main {
 				"print ( ID4 + (4*ID5)) \n " +
 				"end";
 						
-		String simple_print = "begin ";
-		simple_print += "print ( 4 ) \n ";
-		simple_print += "end";
+		String simplePrint = "begin ";
+		simplePrint += "print ( 4 ) \n ";
+		simplePrint += "end";
 		
-		String simple_set = "begin ";
-		simple_set += "var1 := 6;";
-		simple_set += "var2 := 4;";
-		simple_set += "var3 := var1 + var2 ";
-		simple_set += "end";
+		String simpleSet = "begin ";
+		simpleSet += "var1 := 6;";
+		simpleSet += "var2 := 4;";
+		simpleSet += "var3 := var1 + var2 ";
+		simpleSet += "end";
 
-		String awesomeTest_fuckYeah = "begin ";
-		awesomeTest_fuckYeah += "awesome := sauce;";
-		awesomeTest_fuckYeah += "print(fuck, yeah);";
-		awesomeTest_fuckYeah += "meaning_of_life_the_universe_and_everything := 42 ";
-		awesomeTest_fuckYeah += "end";		
+		String awesomeSauce = "begin ";
+		awesomeSauce += "awesome := sauce;";
+		awesomeSauce += "print(heck, yeah);";
+		awesomeSauce += "meaning_of_life_the_universe_and_everything := 42 ";
+		awesomeSauce += "end";		
 			
 		String addTest = "begin ";
-		addTest += "ID1 := 3 + 4 ";
+		addTest += "ID1 := 3 * 4 ";
 		addTest += "end";
 		
-		String sTest = addTest;
+		String signedIntTest = "begin ";
+		signedIntTest += "ID1 := 3 * -4 ";
+		signedIntTest += "end";
+		
+		String sTest = signedIntTest;
 		
 		Parser parser = new Parser(sTest);
 		
