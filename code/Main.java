@@ -2,6 +2,7 @@
 public class Main {
 
 	public static void main(String[] args) {
+
 		
 		String test = "begin \n " +
 				"ID := 6;" +
@@ -13,7 +14,11 @@ public class Main {
 				"print ( ID4 + (4*ID5)) \n " +
 				"end";
 				
-/*		
+/*				
+		String test = "begin ";
+		test += "print ( 4 ) \n ";
+		test += "end";
+		
 		String test = "begin ";
 		test += "var1 := 6;";
 		test += "var2 := 4;";
@@ -24,6 +29,8 @@ public class Main {
 		Parser parser = new Parser(test);
 		
 		parser.microProgram();
+		
+		//System.out.println(parser.isID("_some_Test2_"));
 
         // create parser
         // interpret parser output ??
