@@ -20,14 +20,24 @@ public class TreeNode {
 	{
 		if(node != null)
 		{
-		TreeNode[] temp = new TreeNode[children.length + 1];		
-		for(int i = 0; i < children.length; i ++)
-		{
-			temp[i] = children[i];
-		}		
-		temp[children.length] = node;		
-		children = temp;
-		return true;
+			TreeNode[] temp = new TreeNode[children.length + 1];		
+			for(int i = 0; i < children.length; i ++)
+			{
+				temp[i] = children[i];
+			}		
+			temp[children.length] = node;		
+			children = temp;
+
+			// decide what to return based on node type		
+			if (node.getLabel().equals("error"))
+			{
+				// we added the error node, but we should stop the production of any other nodes
+				return false;
+			}
+			else
+			{
+				return true;
+			}
 		}
 		return false;
 	}
