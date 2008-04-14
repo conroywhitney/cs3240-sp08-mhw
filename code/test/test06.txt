@@ -1,0 +1,5 @@
+begin
+Var1 := 6;
+Var2 := 4;
+Var3 := Var1 + Var2
+end

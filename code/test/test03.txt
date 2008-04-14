@@ -1,0 +1,1 @@
+begin awesome := sauce; print(heck, yeah); meaning_of_life := 42 end
