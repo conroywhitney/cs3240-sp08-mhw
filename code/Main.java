@@ -22,19 +22,6 @@ public class Main {
 			sInput = null;
 		}
 
-		//sInput = "begin awesome := sauce; print(heck, yeah); meaning_of_life := 42 end";
-/*
-		sInput = "begin ";
-		sInput += "ID := 6; ";
-		sInput += "  ID2 := asdfas; ";
-		sInput += "ID3:= 4+2; ";
-		sInput += "ID4 :=5-ID4; ";
-		sInput += "ID5:=4**3; ";
-		sInput += "ID6 := ID3 * ID2; ";
-		sInput += "print ( ID4 + (4*ID5)) ";
-		sInput += "end";
-*/
-
 		if (sInput != null) {	
 			Parser parser = new Parser(sInput);
 		

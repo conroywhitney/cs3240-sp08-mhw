@@ -66,12 +66,6 @@ public class TreeNode {
 		}
 		
 		s += ") \n";
-		/*
-		for(int i = 0; i < getChildren().length; i++)
-		{
-			s += children[i].toString();
-		}
-		*/
 		
 		return s;
 	}

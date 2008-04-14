@@ -69,10 +69,7 @@ public class Parser {
         } else {
 			// using epsilon rule which ALWAYS means an error
 			// going to fast-forward to the end of the sentence: a ';' or 'end'
-
-        	//System.out.println("statementListPrime was EPSILON -- consuming tokens till ; or end");
         	
-			// 
         	String sCurrToken = this.tokenizer.next().getValue();
         	boolean bFirst = true;
         	while ((!sCurrToken.equals("end")) && (!sCurrToken.equals(";"))) {
@@ -131,11 +128,7 @@ public class Parser {
         	if (this.tokenizer.hasNext()) {
 	        	node = new TreeNode(this.tokenizer.next(), "error");
 	        	error(this.tokenizer.next());        		
-        	} else {
-        		//System.out.println("\t\tERROR in statement() but NO TOKEN");
         	}
-        	// TODO: do i need to consume ??
-			// TODO: what about fast-forwarding ??
         }
         
         decrementStackCounter();
@@ -169,7 +162,6 @@ public class Parser {
         if (node.addChild(match(","))) {
             node.addChild(expList());
         } else {
-        	//System.out.println("expListPrime was EPSILON");
         	// epsilon a.k.a. NULL node
             node = null;
         }
@@ -201,7 +193,6 @@ public class Parser {
         } else {
             node = new TreeNode(this.tokenizer.next(), "error");
         	error(this.tokenizer.next());
-        	// TODO: do i need to consume ???
         }
         
         decrementStackCounter();
@@ -221,7 +212,6 @@ public class Parser {
         } else {
         	// because can go to epsilon, set to NULL
         	node = null;
-        	//System.out.println("expPrime was EPSILON");
         }
         
         decrementStackCounter();
@@ -243,9 +233,6 @@ public class Parser {
         if (node == null) { node = match("*"); }
         if (node == null) { node = match("+"); }
         if (node == null) { node = match("-"); }
-
-		// TODO: can we somehow use this short-circuit add to perform the RHS of
-		// supporting 5 * -5 ???? consuming two tokens at once ??
         
         decrementStackCounter();
         return node;
@@ -278,7 +265,6 @@ public class Parser {
     			// consume the token from the tokenizer so that nobody sees this token again
 				this.tokenizer.consume();
 
-    			//System.out.println("consum'd: " + t.getValue());
     		} else {
     			// our token's value was not what we expected to see
 				// either this was simply a test (like "herm, should i use the rule that starts with...")
@@ -328,10 +314,6 @@ public class Parser {
 					// give them back an error node if they were so sure of finding an ID here
     				node = new TreeNode(t, "error");
     				error(t);
-					// TODO: do we need to consume this now ?? methinks ...
-					// TODO: how about till the end of sentence ??
-					// TODO: or maybe the person trying to match this should figure that out ...
-					// TODO: so maybe the addChild returning NULL for error nodes is not a good idea
     			}
     		}
     	}
@@ -355,9 +337,6 @@ public class Parser {
     			t.setType(Token.TokenType.INTNUM);
     			node = new TreeNode(t, "INTNUM");
     			this.tokenizer.consume();
-    			//System.out.println("consum'd: " + t.getValue());
-    		} else {
-    			//System.out.println("fux'd");
     		}
     	}
 
@@ -408,19 +387,18 @@ public class Parser {
 
 		// all characters have to be integers    	
     	for (int i = 0; i < arr.length; i++) {
+			// if first char, can have - or +
     		if ((i==0) && !((isInt(arr[i])) || (arr[i] == '-') || (arr[i] == '+'))) {
-				//System.out.println(i + ": " + arr[i] + "; first + ! isInt | - | +");
     			b = false;
     		}
 
+			// all other chars have to be ints
 			if ((i > 0) && !isInt(arr[i])) {
 				//System.out.println(i + ": " + arr[i] + "; !isInt");
     			b = false;
     		}
 
     	}
-    	
-    	//System.out.println("Checking if " + s + " is INTNUM: " + b);
     	
     	return b;
     }
