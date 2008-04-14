@@ -14,9 +14,9 @@ public class Main {
 
 		try {
 			while ((sLine = br.readLine()) != null) {
-				System.out.println(sLine);
 				sInput += sLine.trim() + "\n";
 			}
+			sInput = sInput.replace("nullbegin", "begin");
 		} catch (IOException ioe) {
 			System.out.println("IO Error");
 			sInput = null;
@@ -41,7 +41,6 @@ public class Main {
 			TreeNode parserNodes = parser.microProgram();
 		
 			AbstractSyntaxTree tree = new AbstractSyntaxTree(parserNodes);
-			//System.out.println(tree.toString());
 			System.out.println(tree.getAST().toString());
 		
 		    System.out.println("Max Stack Size: " + parser.getMaxStackSize());

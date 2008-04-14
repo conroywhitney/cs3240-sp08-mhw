@@ -5,6 +5,8 @@ public class Parser {
 	
 	private int iMaxStack = 0;
 	private int iCurrStack = 0;
+
+	private TreeNode globalRootNode = null;
 	
     public Parser(String sProgram) {
         this.tokenizer = new Tokenizer(sProgram);
@@ -12,7 +14,10 @@ public class Parser {
     }
     
     private void error(Token t) {
-    	//System.out.println("\t\tError on token: " + t.getValue());
+    	System.out.println("\t\tError on token: " + t.getValue());
+		//System.out.println("Tree So Far: ");
+		//AbstractSyntaxTree tree = new AbstractSyntaxTree(globalRootNode);
+		//System.out.println(tree.getAST().toString());
     }
 
     // <Micro-program > -> begin <statement-list> end
@@ -21,17 +26,17 @@ public class Parser {
     	incrementStackCounter();
     	
 		// create original root node for Parse Tree
-    	TreeNode rootNode = new TreeNode("microProgram");
+    	globalRootNode = new TreeNode("microProgram");
     	
-    	rootNode.addChild(match("begin", true));
+    	globalRootNode.addChild(match("begin", true));
         
 		// recursively add statementList and its children             
-        rootNode.addChild(statementList());
+        globalRootNode.addChild(statementList());
         
-        rootNode.addChild(match("end", true));
+        globalRootNode.addChild(match("end", true));
         
         decrementStackCounter();
-        return rootNode;
+        return globalRootNode;
     }
 
     // <statement-list> -> <statement> <statement-list'>
