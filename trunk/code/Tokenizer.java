@@ -1,7 +1,7 @@
 
 public class Tokenizer {
 
-	private TokenList tokens = null;
+	public TokenList tokens = null;
 	private int index;
 	private String program = null;
 	
@@ -90,7 +90,27 @@ public class Tokenizer {
 		  }
 		  else
 		  {
+			  if(tokens.size() > 1 && token.isEmpty())
+			  {
+				  String temp = tokens.get(tokens.size() - 2).getValue();
+				  String temp2 = tokens.get(tokens.size() - 1).getValue();
+				  
+				  if((temp.equals("+") || temp.equals("-") || temp.equals("*") || temp.equals("**") || temp.equals("(") 
+						  || temp.equals(",") || temp.equals(":=") || temp.equals(";")) && (temp2.equals("+") || temp2.equals("-")))
+				  {
+					  token = temp2 + curr;
+					  tokens.removeLast();
+				  }
+				  else
+				  {
+				  token = token + curr;
+				  }
+			  }
+			  else
+			  {
 			  token = token + curr;
+			  }
+			  
 		  }  
 		  currentChar++;
 		  if(currentChar < this.program.length())
@@ -108,6 +128,7 @@ public class Tokenizer {
 		}
 		
 	}
+	
 	
 	public Token next() {
 		// give them the token at the current index
