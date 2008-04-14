@@ -22,6 +22,19 @@ public class TokenList {
     	this.add(new Token(sToken));
     }
     
+    public void removeLast()
+    {
+    	if(tokens.length > 0)
+    	{
+    		Token[] temp = new Token[tokens.length - 1];
+    		for(int i = 0; i < temp.length; i++)
+    		{
+    			temp[i] = tokens[i];
+    		}
+    		tokens = temp;
+    	}
+    }
+    
     public Token get(int i) {
     	return this.tokens[i];
     }
