@@ -12,12 +12,12 @@ public class Parser {
     }
     
     private void error(Token t) {
-    	System.out.println("\t\tError on token: " + t.getValue());
+    	//System.out.println("\t\tError on token: " + t.getValue());
     }
 
     // <Micro-program > -> begin <statement-list> end
     public TreeNode microProgram() {
-    	System.out.println("\nmicroProgram");
+    	//System.out.println("\nmicroProgram");
     	incrementStackCounter();
     	
 		// create original root node for Parse Tree
@@ -36,7 +36,7 @@ public class Parser {
 
     // <statement-list> -> <statement> <statement-list'>
     public TreeNode statementList() {
-    	System.out.println("\nstatementList");
+    	//System.out.println("\nstatementList");
     	incrementStackCounter();
     	    	
     	TreeNode node = new TreeNode("statementList");
@@ -52,7 +52,7 @@ public class Parser {
     // <statement-list'> -> ; <statement-list>
     // <statement-list'> -> \epsilon
     public TreeNode statementListPrime() {
-    	System.out.println("\nstatementListPrime");
+    	//System.out.println("\nstatementListPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("statementListPrime");
@@ -65,7 +65,7 @@ public class Parser {
 			// using epsilon rule which ALWAYS means an error
 			// going to fast-forward to the end of the sentence: a ';' or 'end'
 
-        	System.out.println("statementListPrime was EPSILON -- consuming tokens till ; or end");
+        	//System.out.println("statementListPrime was EPSILON -- consuming tokens till ; or end");
         	
 			// 
         	String sCurrToken = this.tokenizer.next().getValue();
@@ -102,7 +102,7 @@ public class Parser {
     // <statement> ->  print ( <exp-list> )
     // <statement> ->  ID := <exp>
     public TreeNode statement() {
-    	System.out.println("\nstatement");
+    	//System.out.println("\nstatement");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("statement");
@@ -127,7 +127,7 @@ public class Parser {
 	        	node = new TreeNode(this.tokenizer.next(), "error");
 	        	error(this.tokenizer.next());        		
         	} else {
-        		System.out.println("\t\tERROR in statement() but NO TOKEN");
+        		//System.out.println("\t\tERROR in statement() but NO TOKEN");
         	}
         	// TODO: do i need to consume ??
 			// TODO: what about fast-forwarding ??
@@ -139,7 +139,7 @@ public class Parser {
 
     // <exp-list> -> <exp> <exp-list'>
     public TreeNode expList() {
-    	System.out.println("\nexpList");
+    	//System.out.println("\nexpList");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("expList");
@@ -155,7 +155,7 @@ public class Parser {
     // <exp-list'> -> <exp-list>, <exp>
     // <exp-list'> -> \epsilon
     public TreeNode expListPrime() {
-    	System.out.println("\nexpListPrime");
+    	//System.out.println("\nexpListPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("expListPrime");
@@ -164,7 +164,7 @@ public class Parser {
         if (node.addChild(match(","))) {
             node.addChild(expList());
         } else {
-        	System.out.println("expListPrime was EPSILON");
+        	//System.out.println("expListPrime was EPSILON");
         	// epsilon a.k.a. NULL node
             node = null;
         }
@@ -177,7 +177,7 @@ public class Parser {
     // <exp> -> INTNUM <exp'>
     // <exp> -> ID <exp'>
     public TreeNode exp() {
-    	System.out.println("\nexp");
+    	//System.out.println("\nexp");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("exp");
@@ -206,7 +206,7 @@ public class Parser {
     // <exp'> -> <bin-op> <exp>
     // <exp'> -> \epsilon
     public TreeNode expPrime() {
-    	System.out.println("\nexpPrime");
+    	//System.out.println("\nexpPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("expPrime");
@@ -216,7 +216,7 @@ public class Parser {
         } else {
         	// because can go to epsilon, set to NULL
         	node = null;
-        	System.out.println("expPrime was EPSILON");
+        	//System.out.println("expPrime was EPSILON");
         }
         
         decrementStackCounter();
@@ -228,7 +228,7 @@ public class Parser {
     // <bin-op> ->  *
     // <bin-op> ->  **  
     public TreeNode binOp() {
-    	System.out.println("\nbinOp");
+    	//System.out.println("\nbinOp");
     	incrementStackCounter();
     	
     	TreeNode node = null;
@@ -253,7 +253,7 @@ public class Parser {
 	// this method will return a TreeNode with a KEYWORD token
 	// or NULL if the strings don't match
     public TreeNode match(String s, boolean required) {
-    	System.out.println("match: " + s);
+    	//System.out.println("match: " + s);
     	
     	TreeNode node = null;
     	
@@ -273,7 +273,7 @@ public class Parser {
     			// consume the token from the tokenizer so that nobody sees this token again
 				this.tokenizer.consume();
 
-    			System.out.println("consum'd: " + t.getValue());
+    			//System.out.println("consum'd: " + t.getValue());
     		} else {
     			// our token's value was not what we expected to see
 				// either this was simply a test (like "herm, should i use the rule that starts with...")
@@ -295,7 +295,7 @@ public class Parser {
 	// this function looks at a token and sees if it could be an ID
 	// if so, it returns an ID node to be added to the parse tree
     public TreeNode matchID(boolean required) {
-    	System.out.println("matchID");
+    	//System.out.println("matchID");
     	
     	TreeNode node = null;
     	
@@ -315,7 +315,7 @@ public class Parser {
 				// consume token so nobody sees it again
     			this.tokenizer.consume();
 
-    			System.out.println("consum'd: " + t.getValue());
+    			//System.out.println("consum'd: " + t.getValue());
     		} else {
 				// this token did NOT match an ID -- either we were just fishing for options
 				// or we were REQUIRED to find an ID token here
@@ -340,7 +340,7 @@ public class Parser {
 	}
 
     public TreeNode matchINTNUM() {
-    	System.out.println("matchINTNUM");
+    	//System.out.println("matchINTNUM");
     	
     	TreeNode node = null;
     	
@@ -350,7 +350,7 @@ public class Parser {
     			t.setType(Token.TokenType.INTNUM);
     			node = new TreeNode(t, "INTNUM");
     			this.tokenizer.consume();
-    			System.out.println("consum'd: " + t.getValue());
+    			//System.out.println("consum'd: " + t.getValue());
     		} else {
     			//System.out.println("fux'd");
     		}
@@ -404,13 +404,18 @@ public class Parser {
 		// all characters have to be integers    	
     	for (int i = 0; i < arr.length; i++) {
     		if ((i==0) && !((isInt(arr[i])) || (arr[i] == '-') || (arr[i] == '+'))) {
-    			b = false;
-    		} else if (!isInt(arr[i])) {
+				//System.out.println(i + ": " + arr[i] + "; first + ! isInt | - | +");
     			b = false;
     		}
+
+			if ((i > 0) && !isInt(arr[i])) {
+				//System.out.println(i + ": " + arr[i] + "; !isInt");
+    			b = false;
+    		}
+
     	}
     	
-    	System.out.println("Checking if " + s + " is INTNUM: " + b);
+    	//System.out.println("Checking if " + s + " is INTNUM: " + b);
     	
     	return b;
     }
