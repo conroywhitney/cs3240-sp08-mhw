@@ -90,7 +90,7 @@ public class Tokenizer {
 		  }
 		  else
 		  {
-			  if(tokens.size() > 1 && token.isEmpty())
+			  if(tokens.size() > 1 && tokens.isEmpty())
 			  {
 				  String temp = tokens.get(tokens.size() - 2).getValue();
 				  String temp2 = tokens.get(tokens.size() - 1).getValue();
