@@ -170,73 +170,131 @@ public class Parser {
         return node;
     }
 
-    // <exp> -> ( <exp> ) <exp'>
-    // <exp> -> INTNUM <exp'>
-    // <exp> -> ID <exp'>
+    // <exp> -> <addexp> <addexp'>
     public TreeNode exp() {
     	//System.out.println("\nexp");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("exp");
-    	    	
+    	
+        node.addChild(addexp());
+
+        node.addChild(addexpPrime());
+        
+        decrementStackCounter();
+        return node;
+    }
+
+    // <addexp> -> <mulexp> <mulexp'>
+    public TreeNode addexp() {
+    	//System.out.println("\naddexp");
+    	incrementStackCounter();
+    	
+    	TreeNode node = new TreeNode("addexp");
+
+        node.addChild(mulexp());
+
+        node.addChild(mulexpPrime());
+
+        decrementStackCounter();
+        return node;
+    }
+
+    // <addexp'> -> + <addexp>
+    // <addexp'> -> - <addexp>
+    // <addexp'> -> ε
+    public TreeNode addexpPrime() {
+    	//System.out.println("\naddexpPrime");
+    	incrementStackCounter();
+    	
+    	TreeNode node = new TreeNode("addexpPrime");
+
+        if (node.addChild(match("+"))) {
+            node.addChild(addexp());
+        } else if (node.addChild(match("-"))) {
+            node.addChild(addexp());
+        } else {
+            node = null;
+        }
+
+        decrementStackCounter();
+        return node;
+    }
+
+    // <mulexp> -> <powexp> <powexp'>
+    public TreeNode mulexp() {
+    	//System.out.println("\nmulexp");
+    	incrementStackCounter();
+    	
+    	TreeNode node = new TreeNode("mulexp");
+
+        node.addChild(powexp());
+
+        node.addChild(powexpPrime());
+
+        decrementStackCounter();
+        return node;
+    }
+
+    // <mulexp'> -> * <powexp>
+    // <mulexp'> -> ε
+    public TreeNode mulexpPrime() {
+    	//System.out.println("\nmulexpPrime");
+    	incrementStackCounter();
+    	
+    	TreeNode node = new TreeNode("mulexpPrime");
+
+        if (node.addChild(match("*"))) {
+            node.addChild(powexp());
+        } else {
+            node = null;
+        }
+
+        decrementStackCounter();
+        return node;
+    }
+
+    // <powexp> -> ( <exp> )
+    // <powexp> -> ID
+    // <powexp> -> INTNUM
+    public TreeNode powexp() {
+    	//System.out.println("\npowexp");
+    	incrementStackCounter();
+    	
+    	TreeNode node = new TreeNode("powexp");
+
         if (node.addChild(match("("))) {
-			// this was originally a & b/t exp() and match()
-        	if (node.addChild(exp())) {
-				if (node.addChild(match(")", true))) {
-	        		node.addChild(expPrime());
-				}
-        	}
-        } else if (node.addChild(matchINTNUM())) {
-            node.addChild(expPrime());
-        } else if (node.addChild(matchID())) {
-            node.addChild(expPrime());
-        } else {
-            node = new TreeNode(this.tokenizer.next(), "error");
-        	error(this.tokenizer.next());
-        }
-        
-        decrementStackCounter();
-        return node;
-    }
-
-    // <exp'> -> <bin-op> <exp>
-    // <exp'> -> \epsilon
-    public TreeNode expPrime() {
-    	//System.out.println("\nexpPrime");
-    	incrementStackCounter();
-    	
-    	TreeNode node = new TreeNode("expPrime");
-    	
-        if (node.addChild(binOp())) {
             node.addChild(exp());
+            node.addChild(match(")", false));
+        } else if (node.addChild(matchID())) {
+            // OK
+        } else if (node.addChild(matchINTNUM())) {
+            // OK
         } else {
-        	// because can go to epsilon, set to NULL
-        	node = null;
+            // error
         }
-        
+
         decrementStackCounter();
         return node;
     }
 
-    // <bin-op> ->  +
-    // <bin-op> ->  -
-    // <bin-op> ->  *
-    // <bin-op> ->  **  
-    public TreeNode binOp() {
-    	//System.out.println("\nbinOp");
+    // <powexp'> -> ** <powexp>
+    // <powexp'> -> ε
+    public TreeNode powexpPrime() {
+    	//System.out.println("\npowexpPrime");
     	incrementStackCounter();
     	
-    	TreeNode node = null;
-    	
-    	// short-circuit add them to node
-        if (node == null) { node = match("**"); }
-        if (node == null) { node = match("*"); }
-        if (node == null) { node = match("+"); }
-        if (node == null) { node = match("-"); }
-        
+    	TreeNode node = new TreeNode("powexpPrime");
+
+        if (node.addChild(match("**"))) {
+            node.addChild(powexp());
+        } else {
+            node = null;
+        }
+
         decrementStackCounter();
         return node;
-    } 
+    }
 
 	public TreeNode match(String s) {
 		return match(s, false);
