@@ -43,8 +43,4 @@ public class TokenList {
     	return this.tokens.length;
     }
 
-    public boolean isEmpty() {
-        return (this.size() == 0);
-    }
-
 }
