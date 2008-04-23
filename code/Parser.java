@@ -14,10 +14,10 @@ public class Parser {
     }
     
     private void error(Token t) {
-    	System.out.println("\t\tError on token: " + t.getValue());
-		//System.out.println("Tree So Far: ");
+    	System.out.println("\t\t=======================\n\t\tError on token: " + t.getValue() + "\n\t\t=======================");
+		////System.out.println("Tree So Far: ");
 		//AbstractSyntaxTree tree = new AbstractSyntaxTree(globalRootNode);
-		//System.out.println(tree.getAST().toString());
+		////System.out.println(tree.getAST().toString());
     }
 
     // <Micro-program > -> begin <statement-list> end
@@ -57,7 +57,7 @@ public class Parser {
     // <statement-list'> -> ; <statement-list>
     // <statement-list'> -> \epsilon
     public TreeNode statementListPrime() {
-    	//System.out.println("\nstatementListPrime");
+    	//System.out.println("\n\t=============statementListPrime================");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("statementListPrime");
@@ -200,8 +200,8 @@ public class Parser {
         return node;
     }
 
-    // <addexp'> -> + <addexp>
-    // <addexp'> -> - <addexp>
+    // <addexp'> -> + <exp>
+    // <addexp'> -> - <exp>
     // <addexp'> -> ε
     public TreeNode addexpPrime() {
     	//System.out.println("\naddexpPrime");
@@ -210,9 +210,9 @@ public class Parser {
     	TreeNode node = new TreeNode("addexpPrime");
 
         if (node.addChild(match("+"))) {
-            node.addChild(addexp());
+            node.addChild(exp());
         } else if (node.addChild(match("-"))) {
-            node.addChild(addexp());
+            node.addChild(exp());
         } else {
             node = null;
         }
@@ -236,7 +236,7 @@ public class Parser {
         return node;
     }
 
-    // <mulexp'> -> * <powexp>
+    // <mulexp'> -> * <addexp>
     // <mulexp'> -> ε
     public TreeNode mulexpPrime() {
     	//System.out.println("\nmulexpPrime");
@@ -245,7 +245,7 @@ public class Parser {
     	TreeNode node = new TreeNode("mulexpPrime");
 
         if (node.addChild(match("*"))) {
-            node.addChild(powexp());
+            node.addChild(addexp());
         } else {
             node = null;
         }
@@ -278,7 +278,7 @@ public class Parser {
         return node;
     }
 
-    // <powexp'> -> ** <powexp>
+    // <powexp'> -> ** <mulexp>
     // <powexp'> -> ε
     public TreeNode powexpPrime() {
     	//System.out.println("\npowexpPrime");
@@ -287,7 +287,7 @@ public class Parser {
     	TreeNode node = new TreeNode("powexpPrime");
 
         if (node.addChild(match("**"))) {
-            node.addChild(powexp());
+            node.addChild(mulexp());
         } else {
             node = null;
         }
@@ -313,6 +313,8 @@ public class Parser {
 
     		if (s.equals(t.getValue())) {
     			// if our token's value is what we expect to see
+
+                //System.out.println("\tconsume'd: " + s);
 
 				// ... let it forever be known it is a KEYWORD token (aka reserved characters)
     			t.setType(Token.TokenType.KEYWORD);
@@ -355,6 +357,8 @@ public class Parser {
     		if (this.isID(t.getValue())) {
 				// matches our "regex" (aka, character parsing) for an ID
 
+                //System.out.println("\tconsume'd: " + t.getValue());
+
 				// give the token type ID
     			t.setType(Token.TokenType.ID);
 
@@ -392,6 +396,7 @@ public class Parser {
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
     		if (this.isINTNUM(t.getValue())) {
+                //System.out.println("\tconsume'd: " + t.getValue());
     			t.setType(Token.TokenType.INTNUM);
     			node = new TreeNode(t, "INTNUM");
     			this.tokenizer.consume();
