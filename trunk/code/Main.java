@@ -46,8 +46,10 @@ public class Main {
 
 				System.out.println("Max Stack Size: "
 						+ parser.getMaxStackSize());
+
+                ast.evaluate();
 				
-				System.out.println("Evaluation: " + ast.evaluate());
+				//System.out.println("Evaluation: " + ast.evaluate());
 			}
 		} else {
 			System.out.println("IO Error");

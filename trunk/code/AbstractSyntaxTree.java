@@ -56,4 +56,9 @@ public class AbstractSyntaxTree {
 	{
 		return new AbstractSyntaxTree(root.getAST());
 	}
+	
+	public void evaluate()
+	{
+		root.evaluate();
+	}
 }
