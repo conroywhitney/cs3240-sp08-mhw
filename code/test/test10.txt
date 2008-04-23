@@ -1,0 +1,4 @@
+begin
+var1 := 4 + 3;
+print(var1)
+end
