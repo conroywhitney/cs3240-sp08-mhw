@@ -171,57 +171,85 @@ public class TreeNode {
 
 		return root;
 	}
+	
+	public TreeNode evalNext(VariableList idents)
+	{
+		System.out.println(token.getValue());
+		if(token.getValue().equals(";"))
+		{
+			children[0].evaluate(idents);
+			return children[1].evalNext(idents);
+		}
+		else
+		{
+			evaluate(idents);
+			return null;
+		}
+	}
 
-	public Token evaluate() {
+	public Token evaluate(VariableList idents) {
 		Token t = token;
 
         String sValue = token.getValue();
 
-        System.out.println("TOKEN: " + sValue);
+        //System.out.println("TOKEN: " + sValue);
     
 		if (sValue.equals("+")) {
 			if (children.length == 2) {
-				t = new Token(new BigInteger(children[0].evaluate().getValue())
-						.add(new BigInteger(children[1].evaluate().getValue()))
+				t = new Token(new BigInteger(children[0].evaluate(idents).getValue())
+						.add(new BigInteger(children[1].evaluate(idents).getValue()))
 						.toString());
 			}
 		}
 		else if (sValue.equals("-")) {
 			if (children.length == 2) {
-				t = new Token(new BigInteger(children[0].evaluate().getValue())
-						.subtract(new BigInteger(children[1].evaluate().getValue()))
+				t = new Token(new BigInteger(children[0].evaluate(idents).getValue())
+						.subtract(new BigInteger(children[1].evaluate(idents).getValue()))
 						.toString());
 			}
 		}
 		else if (sValue.equals("*")) {
 			if (children.length == 2) {
-				t = new Token(new BigInteger(children[0].evaluate().getValue())
-						.multiply(new BigInteger(children[1].evaluate().getValue()))
+				t = new Token(new BigInteger(children[0].evaluate(idents).getValue())
+						.multiply(new BigInteger(children[1].evaluate(idents).getValue()))
 						.toString());
 			}
 		}
 		else if (sValue.equals("**")) {
 			if (children.length == 2) {
-				t = new Token(new BigInteger(children[0].evaluate().getValue())
-						.pow(new BigInteger(children[1].evaluate().getValue()).intValue())
-						.toString());
+				BigInteger base = new BigInteger(children[0].evaluate(idents).getValue());
+				BigInteger exponent = new BigInteger(children[1].evaluate(idents).getValue());
+				t = new Token(power(base, exponent));
 			}
 		}
 		else if (sValue.equals(":=")) {
-			t = children[1].evaluate();
+			t = children[1].evaluate(idents);
             // set value in AL
-            String sVarName = children[0].evaluate().getValue();
-            System.out.println("Assigning '" + sVarName + "' to '" + t.getValue() + "'");
+			//System.out.println(idents);
+            //String sVarName = children[0].evaluate(idents).getValue();
+            //System.out.println("Assigning '" + children[0].getToken().getValue() + "' to '" + t.getValue() + "'");
+            
+            idents.update(new Variable(children[0].getToken().getValue(), new BigInteger(t.getValue())));
+            //System.out.println(idents);
+		}
+		else if (t.getType() == Token.TokenType.ID)
+		{
+			String s = "0";
+			if(idents.hasVariable(t.getValue()))
+			{
+				s = idents.getVal(t.getValue()).toString();
+			} 
+			t = new Token(s);
 		}
 		else if (sValue.equals(";")) {
-			children[0].evaluate();
-            children[1].evaluate();
+			children[0].evaluate(idents);		
+            children[1].evaluate(idents);
 		}
 		else if (sValue.equals("end")) {
-			t = children[1].evaluate();
+			t = children[1].evaluate(idents);
 		}
         else if (sValue.equals("print")) {
-            children[0].print();
+            children[0].print(idents);
             t = null;
         }
         else if (sValue.equals(",")) {
@@ -232,17 +260,41 @@ public class TreeNode {
 		return t;
 	}
 
-    public void print() {
+    public void print(VariableList idents) {
         String sValue = token.getValue();
 
         if (sValue.equals(",")) {
-            children[0].print();
-            children[1].print();
+            children[0].print(idents);
+            children[1].print(idents);
         } else if (token.getType() == Token.TokenType.ID) {
-            System.out.println("REALLY PRINT MY ID VALUE");
+            System.out.println(idents.getVal(token.getValue()));
         } else { 
-            Token t = this.evaluate();
+            System.out.println(this.evaluate(idents).getValue());
         }
+    }
+    
+    public String power(BigInteger base, BigInteger exponent)
+    {
+    	String s = "";
+    	
+    	if(base.intValue() == -1 && exponent.intValue() == -1)
+    	{
+    		s = "-1";
+    	}
+    	else if((base.intValue() == 0 && exponent.intValue() != 0) || (exponent.intValue() < 0 && base.intValue() != 1)) //exponent negative or 0^n where n !=0
+    	{
+    		s = "0";
+    	}
+    	else if(exponent.intValue() == 0 || (base.intValue() == 1 && exponent.intValue() == -1)) //exponent 0
+    	{
+    		s = "1";
+    	}
+    	else //base^positive
+    	{
+    		s = base.pow(exponent.intValue()).toString();
+    	}
+    	
+    	return s;
     }
 
 	public String getLabel() {
