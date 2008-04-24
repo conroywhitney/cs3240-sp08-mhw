@@ -178,7 +178,7 @@ public class TreeNode {
 		if(token.getValue().equals(";"))
 		{
 			children[0].evaluate(idents);
-			return children[1].evalNext(idents);
+			return children[1];
 		}
 		else
 		{
