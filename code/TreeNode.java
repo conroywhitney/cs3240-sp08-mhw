@@ -171,17 +171,14 @@ public class TreeNode {
 
 		return root;
 	}
-	
-	public TreeNode evalNext(VariableList idents)
-	{
-		System.out.println(token.getValue());
-		if(token.getValue().equals(";"))
-		{
+
+	public TreeNode evalNext(VariableList idents) {
+
+		if (token.getValue().equals(";")) {
+			// System.out.println(children[0].toString());
 			children[0].evaluate(idents);
 			return children[1];
-		}
-		else
-		{
+		} else {
 			evaluate(idents);
 			return null;
 		}
@@ -190,115 +187,117 @@ public class TreeNode {
 	public Token evaluate(VariableList idents) {
 		Token t = token;
 
-     // not always get a token -- like if an error muahaha
-     if (token != null) {
-        String sValue = token.getValue();
+		// not always get a token -- like if an error muahaha
+		if (token != null) {
+			String sValue = token.getValue();
 
-        //System.out.println("TOKEN: " + sValue);
-    
-		if (sValue.equals("+")) {
-			if (children.length == 2) {
-				t = new Token(new BigInteger(children[0].evaluate(idents).getValue())
-						.add(new BigInteger(children[1].evaluate(idents).getValue()))
-						.toString());
+			// System.out.println("TOKEN: " + sValue);
+
+			if (sValue.equals("+")) {
+				if (children.length == 2) {
+					t = new Token(new BigInteger(children[0].evaluate(idents)
+							.getValue()).add(
+							new BigInteger(children[1].evaluate(idents)
+									.getValue())).toString());
+				}
+			} else if (sValue.equals("-")) {
+				if (children.length == 2) {
+					t = new Token(new BigInteger(children[0].evaluate(idents)
+							.getValue()).subtract(
+							new BigInteger(children[1].evaluate(idents)
+									.getValue())).toString());
+				}
+			} else if (sValue.equals("*")) {
+				if (children.length == 2) {
+					t = new Token(new BigInteger(children[0].evaluate(idents)
+							.getValue()).multiply(
+							new BigInteger(children[1].evaluate(idents)
+									.getValue())).toString());
+				}
+			} else if (sValue.equals("**")) {
+				if (children.length == 2) {
+					BigInteger base = new BigInteger(children[0].evaluate(
+							idents).getValue());
+					BigInteger exponent = new BigInteger(children[1].evaluate(
+							idents).getValue());
+					t = new Token(power(base, exponent));
+				}
+			} else if (sValue.equals(":=")) {
+				t = children[1].evaluate(idents);
+				// set value in AL
+				// System.out.println(idents);
+				// String sVarName = children[0].evaluate(idents).getValue();
+				// System.out.println("Assigning '" +
+				// children[0].getToken().getValue() + "' to '" + t.getValue() +
+				// "'");
+
+				idents.update(new Variable(children[0].getToken().getValue(),
+						new BigInteger(t.getValue())));
+				// System.out.println(idents);
+			} else if (t.getType() == Token.TokenType.ID) {
+				String s = "0";
+				if (idents.hasVariable(t.getValue())) {
+					s = idents.getVal(t.getValue()).toString();
+				}
+				t = new Token(s);
+			} else if (sValue.equals(";")) {
+				children[0].evaluate(idents);
+				children[1].evaluate(idents);
+			} else if (sValue.equals("end")) {
+				t = children[1].evaluate(idents);
+			} else if (sValue.equals("print")) {
+				System.out.println("****************OUTPUT*****************");
+				children[0].print(idents);
+				System.out.println("***************************************");
+				t = null;
+			} else if (sValue.equals(",")) {
+				t = null;
 			}
 		}
-		else if (sValue.equals("-")) {
-			if (children.length == 2) {
-				t = new Token(new BigInteger(children[0].evaluate(idents).getValue())
-						.subtract(new BigInteger(children[1].evaluate(idents).getValue()))
-						.toString());
-			}
-		}
-		else if (sValue.equals("*")) {
-			if (children.length == 2) {
-				t = new Token(new BigInteger(children[0].evaluate(idents).getValue())
-						.multiply(new BigInteger(children[1].evaluate(idents).getValue()))
-						.toString());
-			}
-		}
-		else if (sValue.equals("**")) {
-			if (children.length == 2) {
-				BigInteger base = new BigInteger(children[0].evaluate(idents).getValue());
-				BigInteger exponent = new BigInteger(children[1].evaluate(idents).getValue());
-				t = new Token(power(base, exponent));
-			}
-		}
-		else if (sValue.equals(":=")) {
-			t = children[1].evaluate(idents);
-            // set value in AL
-			//System.out.println(idents);
-            //String sVarName = children[0].evaluate(idents).getValue();
-            //System.out.println("Assigning '" + children[0].getToken().getValue() + "' to '" + t.getValue() + "'");
-            
-            idents.update(new Variable(children[0].getToken().getValue(), new BigInteger(t.getValue())));
-            //System.out.println(idents);
-		}
-		else if (t.getType() == Token.TokenType.ID)
-		{
-			String s = "0";
-			if(idents.hasVariable(t.getValue()))
-			{
-				s = idents.getVal(t.getValue()).toString();
-			} 
-			t = new Token(s);
-		}
-		else if (sValue.equals(";")) {
-			children[0].evaluate(idents);		
-            children[1].evaluate(idents);
-		}
-		else if (sValue.equals("end")) {
-			t = children[1].evaluate(idents);
-		}
-        else if (sValue.equals("print")) {
-            children[0].print(idents);
-            t = null;
-        }
-        else if (sValue.equals(",")) {
-            t = null;
-        }
-      }
-        
-		
+
 		return t;
 	}
 
-    public void print(VariableList idents) {
-        String sValue = token.getValue();
+	public void print(VariableList idents) {
+		String sValue = token.getValue();
 
-        if (sValue.equals(",")) {
-            children[0].print(idents);
-            children[1].print(idents);
-        } else if (token.getType() == Token.TokenType.ID) {
-            System.out.println(idents.getVal(token.getValue()));
-        } else { 
-            System.out.println(this.evaluate(idents).getValue());
-        }
-    }
-    
-    public String power(BigInteger base, BigInteger exponent)
-    {
-    	String s = "";
-    	
-    	if(base.intValue() == -1 && exponent.intValue() == -1)
-    	{
-    		s = "-1";
-    	}
-    	else if((base.intValue() == 0 && exponent.intValue() != 0) || (exponent.intValue() < 0 && base.intValue() != 1)) //exponent negative or 0^n where n !=0
-    	{
-    		s = "0";
-    	}
-    	else if(exponent.intValue() == 0 || (base.intValue() == 1 && exponent.intValue() == -1)) //exponent 0
-    	{
-    		s = "1";
-    	}
-    	else //base^positive
-    	{
-    		s = base.pow(exponent.intValue()).toString();
-    	}
-    	
-    	return s;
-    }
+		if (sValue.equals(",")) {
+			children[0].print(idents);
+			children[1].print(idents);
+		} else if (token.getType() == Token.TokenType.ID) {
+
+			System.out.println(idents.getVal(token.getValue()));
+		} else {
+			System.out.println(this.evaluate(idents).getValue());
+		}
+	}
+
+	public String power(BigInteger base, BigInteger exponent) {
+		String s = "";
+
+		if (base.intValue() == -1 && exponent.intValue() == -1) {
+			s = "-1";
+		} else if ((base.intValue() == 0 && exponent.intValue() != 0)
+				|| (exponent.intValue() < 0 && base.intValue() != 1)) // exponent
+		// negative
+		// or
+		// 0^n
+		// where
+		// n !=0
+		{
+			s = "0";
+		} else if (exponent.intValue() == 0
+				|| (base.intValue() == 1 && exponent.intValue() == -1)) // exponent
+		// 0
+		{
+			s = "1";
+		} else // base^positive
+		{
+			s = base.pow(exponent.intValue()).toString();
+		}
+
+		return s;
+	}
 
 	public String getLabel() {
 		return label;
@@ -339,21 +338,21 @@ public class TreeNode {
 		this.children = children;
 	}
 
-    public boolean hasError() {
-        boolean bHasError = false;
-        if (this.label.equals("error")) {
-            bHasError = true;
-            System.out.println("I HAGVE UN HERROR");
-        } else {
-            for (int i = 0; i < this.children.length; i++) {
-                System.out.println("Trying child");
-                if (children[i].hasError()) {
-                    System.out.println("Child has error");
-                    bHasError = true;
-                }
-            }
-        }
-        return bHasError;
-    }
+	public boolean hasError() {
+		boolean bHasError = false;
+		if (this.label.equals("error")) {
+			bHasError = true;
+			System.out.println("I HAGVE UN HERROR");
+		} else {
+			for (int i = 0; i < this.children.length; i++) {
+				System.out.println("Trying child");
+				if (children[i].hasError()) {
+					System.out.println("Child has error");
+					bHasError = true;
+				}
+			}
+		}
+		return bHasError;
+	}
 
 }
