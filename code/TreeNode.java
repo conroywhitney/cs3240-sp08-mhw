@@ -190,6 +190,8 @@ public class TreeNode {
 	public Token evaluate(VariableList idents) {
 		Token t = token;
 
+     // not always get a token -- like if an error muahaha
+     if (token != null) {
         String sValue = token.getValue();
 
         //System.out.println("TOKEN: " + sValue);
@@ -255,6 +257,7 @@ public class TreeNode {
         else if (sValue.equals(",")) {
             t = null;
         }
+      }
         
 		
 		return t;
@@ -335,5 +338,22 @@ public class TreeNode {
 	public void setChildren(TreeNode[] children) {
 		this.children = children;
 	}
+
+    public boolean hasError() {
+        boolean bHasError = false;
+        if (this.label.equals("error")) {
+            bHasError = true;
+            System.out.println("I HAGVE UN HERROR");
+        } else {
+            for (int i = 0; i < this.children.length; i++) {
+                System.out.println("Trying child");
+                if (children[i].hasError()) {
+                    System.out.println("Child has error");
+                    bHasError = true;
+                }
+            }
+        }
+        return bHasError;
+    }
 
 }

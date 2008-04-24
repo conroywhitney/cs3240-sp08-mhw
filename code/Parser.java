@@ -33,11 +33,13 @@ public class Parser {
 		// create original root node for Parse Tree
     	globalRootNode = new TreeNode("microProgram");
     	
+        // always need to match "begin"
     	globalRootNode.addChild(match("begin", true));
         
 		// recursively add statementList and its children             
         globalRootNode.addChild(statementList());
         
+        // always need to match "end"
         globalRootNode.addChild(match("end", true));
         
         decrementStackCounter();
@@ -119,39 +121,40 @@ public class Parser {
 			// if we've got "print", we REQUIRE "(", which is that second param
 			// match() will return an error node if we cannot match "("
 			// in which case addChild() will return FALSE
-            if (node.addChild(match("(", true))) {
-            	// we are inside a print statement now
-            	// we need to make sure that all IDs used are declared already
-            	this.bRequireDeclaration = true;
+            node.addChild(match("(", true));
+
+           	// we are inside a print statement now
+           	// we need to make sure that all IDs used are declared already
+           	this.bRequireDeclaration = true;
             	
-            	if (node.addChild(expList())) {
-            		if (node.addChild(match(")"))) {
-            			// good job team
-            		} else {
-            			node = new TreeNode("error");
-            		}
+          	node.addChild(expList());
+
+            node.addChild(match(")", true));
             		
-            		// we are out of the print statement now so we can lax our guard
-            		this.bRequireDeclaration = false;
-            	}
-            }
+           	// we are out of the print statement now so we can lax our guard
+           	this.bRequireDeclaration = false;
+
         } else if (node.addChild(matchID())) {
-        	if (node.addChild(match(":=", true))) {
-        		// we are on the right-side of an assignment operator now
-        		// so we need to make sure that all IDs are declared already
-        		this.bRequireDeclaration = true;
+            node.addChild(match(":=", true));
+        	
+            // we are on the right-side of an assignment operator now
+        	// so we need to make sure that all IDs are declared already
+       		this.bRequireDeclaration = true;
         		
-        		node.addChild(exp());
+       		node.addChild(exp());
         		
-        		// we are done with the assignment now so we can lax our guard
-        		this.bRequireDeclaration = false;
-        	}
+       		// we are done with the assignment now so we can lax our guard
+       		this.bRequireDeclaration = false;
+
         } else {
-        	// error
-        	if (this.tokenizer.hasNext()) {
-	        	node = new TreeNode(this.tokenizer.next(), "error");
-	        	error(this.tokenizer.next());        		
-        	}
+        	// this cannot be null so this is an error
+            node = new TreeNode("error");
+
+        }
+
+        if (node.hasError()) {
+            System.out.println("\tNOTHING");
+            node = new TreeNode("error");
         }
         
         decrementStackCounter();
@@ -165,9 +168,9 @@ public class Parser {
     	
     	TreeNode node = new TreeNode("expList");
 
-		if (node.addChild(exp())) {
-			node.addChild(expListPrime());			
-		}
+		node.addChild(exp());
+
+		node.addChild(expListPrime());			
     	
     	decrementStackCounter();
         return node;
@@ -200,9 +203,9 @@ public class Parser {
     	
     	TreeNode node = new TreeNode("exp");
     	
-        if (node.addChild(addexp())) {
-			node.addChild(addexpPrime());        	
-        }
+        node.addChild(addexp());
+
+		node.addChild(addexpPrime());        	
         
         decrementStackCounter();
         return node;
@@ -215,9 +218,9 @@ public class Parser {
     	
     	TreeNode node = new TreeNode("addexp");
 
-        if (node.addChild(mulexp())) {
-			node.addChild(mulexpPrime());        	
-        }
+        node.addChild(mulexp());
+
+		node.addChild(mulexpPrime());        	
 
         decrementStackCounter();
         return node;
@@ -251,9 +254,9 @@ public class Parser {
     	
     	TreeNode node = new TreeNode("mulexp");
 
-        if (node.addChild(powexp())) {
-			node.addChild(powexpPrime());        	
-        }
+        node.addChild(powexp());
+
+		node.addChild(powexpPrime());        	
 
         decrementStackCounter();
         return node;
@@ -288,7 +291,7 @@ public class Parser {
 
         if (node.addChild(match("("))) {
             node.addChild(exp());
-            node.addChild(match(")", false));
+            node.addChild(match(")", true));
         } else if (node.addChild(matchID())) {
             // OK
         } else if (node.addChild(matchINTNUM())) {
@@ -414,6 +417,8 @@ public class Parser {
 					// give them back an error node if they were so sure of finding an ID here
     				node = new TreeNode(t, "error");
     				error(t);
+                    // and consume the token so nobody sees it evar again
+    				this.tokenizer.consume();
     			}
     		}
     	}
