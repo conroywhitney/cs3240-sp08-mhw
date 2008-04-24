@@ -9,6 +9,7 @@ public class Parser {
 	private TreeNode globalRootNode = null;
 	
 	private VariableList variableList = null;
+    private String lastVariableOnLHS = "";
 	
 	private boolean bRequireDeclaration = false;
 		
@@ -19,15 +20,15 @@ public class Parser {
     }
     
     private void error(Token t) {
-    	System.out.println("\t\t=======================\n\t\tError on token: " + t.getValue() + "\n\t\t=======================");
-		//System.out.println("Tree So Far: ");
+    	System.out.println("=======================\nError on token: " + t.getValue() + "\n=======================");
+		////System.out.println("Tree So Far: ");
 		//AbstractSyntaxTree tree = new AbstractSyntaxTree(globalRootNode);
-		//System.out.println(tree.getAST().toString());
+		////System.out.println(tree.getAST().toString());
     }
 
     // <Micro-program > -> begin <statement-list> end
     public TreeNode microProgram() {
-    	System.out.println("\nmicroProgram");
+    	//System.out.println("\nmicroProgram");
     	incrementStackCounter();
     	
 		// create original root node for Parse Tree
@@ -48,7 +49,7 @@ public class Parser {
 
     // <statement-list> -> <statement> <statement-list'>
     public TreeNode statementList() {
-    	System.out.println("\nstatementList");
+    	//System.out.println("\nstatementList");
     	incrementStackCounter();
     	    	
     	TreeNode node = new TreeNode("statementList");
@@ -64,7 +65,7 @@ public class Parser {
     // <statement-list'> -> ; <statement-list>
     // <statement-list'> -> \epsilon
     public TreeNode statementListPrime() {
-    	System.out.println("\nstatementListPrime");
+    	//System.out.println("\nstatementListPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("statementListPrime");
@@ -111,7 +112,7 @@ public class Parser {
     // <statement> ->  print ( <exp-list> )
     // <statement> ->  ID := <exp>
     public TreeNode statement() {
-    	System.out.println("\nstatement");
+    	//System.out.println("\nstatement");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("statement");
@@ -142,6 +143,15 @@ public class Parser {
        		this.bRequireDeclaration = true;
         		
        		node.addChild(exp());
+
+            // so see if this node has errors while trying to set RHS
+            // if not, go ahead and add this variable to the list
+            if (!node.hasError()) {
+                // also, add this to our list of known variables
+	    		this.declare(this.lastVariableOnLHS);
+            }
+
+	    			
         		
        		// we are done with the assignment now so we can lax our guard
        		this.bRequireDeclaration = false;
@@ -153,7 +163,6 @@ public class Parser {
         }
 
         if (node.hasError()) {
-            System.out.println("\tNOTHING");
             node = new TreeNode("error");
         }
         
@@ -163,7 +172,7 @@ public class Parser {
 
     // <exp-list> -> <exp> <exp-list'>
     public TreeNode expList() {
-    	System.out.println("\nexpList");
+    	//System.out.println("\nexpList");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("expList");
@@ -179,7 +188,7 @@ public class Parser {
     // <exp-list'> -> , <exp-list>
     // <exp-list'> -> \epsilon
     public TreeNode expListPrime() {
-    	System.out.println("\nexpListPrime");
+    	//System.out.println("\nexpListPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("expListPrime");
@@ -198,7 +207,7 @@ public class Parser {
 
     // <exp> -> <addexp> <addexp'>
     public TreeNode exp() {
-    	System.out.println("\nexp");
+    	//System.out.println("\nexp");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("exp");
@@ -213,7 +222,7 @@ public class Parser {
 
     // <addexp> -> <mulexp> <mulexp'>
     public TreeNode addexp() {
-    	System.out.println("\naddexp");
+    	//System.out.println("\naddexp");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("addexp");
@@ -230,7 +239,7 @@ public class Parser {
     // <addexp'> -> - <exp>
     // <addexp'> -> \epsilon
     public TreeNode addexpPrime() {
-    	System.out.println("\naddexpPrime");
+    	//System.out.println("\naddexpPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("addexpPrime");
@@ -249,7 +258,7 @@ public class Parser {
 
     // <mulexp> -> <powexp> <powexp'>
     public TreeNode mulexp() {
-    	System.out.println("\nmulexp");
+    	//System.out.println("\nmulexp");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("mulexp");
@@ -265,7 +274,7 @@ public class Parser {
     // <mulexp'> -> * <addexp>
     // <mulexp'> -> \epsilon
     public TreeNode mulexpPrime() {
-    	System.out.println("\nmulexpPrime");
+    	//System.out.println("\nmulexpPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("mulexpPrime");
@@ -284,7 +293,7 @@ public class Parser {
     // <powexp> -> ID
     // <powexp> -> INTNUM
     public TreeNode powexp() {
-    	System.out.println("\npowexp");
+    	//System.out.println("\npowexp");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("powexp");
@@ -307,7 +316,7 @@ public class Parser {
     // <powexp'> -> ** <mulexp>
     // <powexp'> -> \epsilon
     public TreeNode powexpPrime() {
-    	System.out.println("\npowexpPrime");
+    	//System.out.println("\npowexpPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("powexpPrime");
@@ -329,7 +338,7 @@ public class Parser {
 	// this method will return a TreeNode with a KEYWORD token
 	// or NULL if the strings don't match
     public TreeNode match(String s, boolean required) {
-    	System.out.println("match: " + s);
+    	//System.out.println("match: " + s);
     	
     	TreeNode node = null;
     	
@@ -340,7 +349,7 @@ public class Parser {
     		if (s.equals(t.getValue())) {
     			// if our token's value is what we expect to see
 
-                System.out.println("\tconsume'd: " + s);
+                //System.out.println("\tconsume'd: " + s);
 
 				// ... let it forever be known it is a KEYWORD token (aka reserved characters)
     			t.setType(Token.TokenType.KEYWORD);
@@ -372,7 +381,7 @@ public class Parser {
 	// this function looks at a token and sees if it could be an ID
 	// if so, it returns an ID node to be added to the parse tree
     public TreeNode matchID(boolean required) {
-    	System.out.println("matchID");
+    	//System.out.println("matchID");
     	
     	TreeNode node = null;
     	
@@ -396,16 +405,23 @@ public class Parser {
 	    			this.tokenizer.consume();	
 				} else {
 					// we are using this ID in a legal way
-					System.out.println("\tconsume'd: " + t.getValue());
+					//System.out.println("\tconsume'd: " + t.getValue());
 
 					// give the token type ID
 	    			t.setType(Token.TokenType.ID);
 	
 					// give the new node type ID, and the newfound ID token
 	    			node = new TreeNode(t, "ID");
-	    			
-	    			// also, add this to our list of known variables
-	    			this.declare(t.getValue());
+
+                    // if not requiring declaration, this means we are trying to DECLARE the variable
+                    // in which case this was the last variable we tried to declare
+                    // remember this so we can try to stick it in the variable list after correct RHS eval
+                    if (!this.bRequireDeclaration) {
+                        this.lastVariableOnLHS = t.getValue();
+                    }
+
+                    // going to declare this ID after we already know that the RHS has evaluated correctly
+                    // else we don't even try to put it in the list
 	
 					// consume token so nobody sees it again
 	    			this.tokenizer.consume();				
@@ -432,14 +448,14 @@ public class Parser {
 	}
 
     public TreeNode matchINTNUM() {
-    	System.out.println("matchINTNUM");
+    	//System.out.println("matchINTNUM");
     	
     	TreeNode node = null;
     	
     	if (this.tokenizer.hasNext()) {
     		Token t = this.tokenizer.next();
     		if (this.isINTNUM(t.getValue())) {
-                System.out.println("\tconsume'd: " + t.getValue());
+                //System.out.println("\tconsume'd: " + t.getValue());
     			t.setType(Token.TokenType.INTNUM);
     			node = new TreeNode(t, "INTNUM");
     			this.tokenizer.consume();
@@ -508,7 +524,7 @@ public class Parser {
 
 			// all other chars have to be ints
 			if ((i > 0) && !isInt(arr[i])) {
-				System.out.println(i + ": " + arr[i] + "; !isInt");
+				//System.out.println(i + ": " + arr[i] + "; !isInt");
     			b = false;
     		}
 
