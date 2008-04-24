@@ -11,7 +11,7 @@ public class Parser {
 	private VariableList variableList = null;
 	
 	private boolean bRequireDeclaration = false;
-	
+		
     public Parser(String sProgram) {
         this.tokenizer = new Tokenizer(sProgram);
         this.tokenizer.tokenize();
@@ -51,7 +51,7 @@ public class Parser {
     	    	
     	TreeNode node = new TreeNode("statementList");
     	
-    	node.addChild(statement());
+		node.addChild(statement());
     	
     	node.addChild(statementListPrime());
     	
@@ -62,7 +62,7 @@ public class Parser {
     // <statement-list'> -> ; <statement-list>
     // <statement-list'> -> \epsilon
     public TreeNode statementListPrime() {
-    	System.out.println("\n\t=============statementListPrime================");
+    	System.out.println("\nstatementListPrime");
     	incrementStackCounter();
     	
     	TreeNode node = new TreeNode("statementListPrime");
@@ -125,7 +125,11 @@ public class Parser {
             	this.bRequireDeclaration = true;
             	
             	if (node.addChild(expList())) {
-            		node.addChild(match(")", true));
+            		if (node.addChild(match(")"))) {
+            			// good job team
+            		} else {
+            			node = new TreeNode("error");
+            		}
             		
             		// we are out of the print statement now so we can lax our guard
             		this.bRequireDeclaration = false;
@@ -161,9 +165,9 @@ public class Parser {
     	
     	TreeNode node = new TreeNode("expList");
 
-		node.addChild(exp());
-		
-		node.addChild(expListPrime());
+		if (node.addChild(exp())) {
+			node.addChild(expListPrime());			
+		}
     	
     	decrementStackCounter();
         return node;
@@ -196,9 +200,9 @@ public class Parser {
     	
     	TreeNode node = new TreeNode("exp");
     	
-        node.addChild(addexp());
-
-        node.addChild(addexpPrime());
+        if (node.addChild(addexp())) {
+			node.addChild(addexpPrime());        	
+        }
         
         decrementStackCounter();
         return node;
@@ -211,9 +215,9 @@ public class Parser {
     	
     	TreeNode node = new TreeNode("addexp");
 
-        node.addChild(mulexp());
-
-        node.addChild(mulexpPrime());
+        if (node.addChild(mulexp())) {
+			node.addChild(mulexpPrime());        	
+        }
 
         decrementStackCounter();
         return node;
@@ -247,9 +251,9 @@ public class Parser {
     	
     	TreeNode node = new TreeNode("mulexp");
 
-        node.addChild(powexp());
-
-        node.addChild(powexpPrime());
+        if (node.addChild(powexp())) {
+			node.addChild(powexpPrime());        	
+        }
 
         decrementStackCounter();
         return node;
@@ -290,7 +294,7 @@ public class Parser {
         } else if (node.addChild(matchINTNUM())) {
             // OK
         } else {
-            // error
+            node = new TreeNode("error");
         }
 
         decrementStackCounter();
@@ -384,6 +388,9 @@ public class Parser {
 					// and throw an error
 					node = new TreeNode(t, "error");
 					error(t);
+					
+					// consume token so nobody sees it again
+	    			this.tokenizer.consume();	
 				} else {
 					// we are using this ID in a legal way
 					System.out.println("\tconsume'd: " + t.getValue());
