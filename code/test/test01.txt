@@ -1,6 +1,6 @@
 begin
 ID := 6;
-  ID2 := asdfas;
+ID2 := 3;
 ID3:= 4+2;
 ID4 :=5-ID4;
 ID5:=4**3;
