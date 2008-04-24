@@ -342,12 +342,9 @@ public class TreeNode {
 		boolean bHasError = false;
 		if (this.label.equals("error")) {
 			bHasError = true;
-			System.out.println("I HAGVE UN HERROR");
 		} else {
 			for (int i = 0; i < this.children.length; i++) {
-				System.out.println("Trying child");
 				if (children[i].hasError()) {
-					System.out.println("Child has error");
 					bHasError = true;
 				}
 			}
