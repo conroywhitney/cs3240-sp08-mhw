@@ -2,7 +2,6 @@
 public class TokenList {
 
 	private Token[] tokens;
-	private int index;
 	
     public TokenList() {
     	this.tokens = new Token[0];
