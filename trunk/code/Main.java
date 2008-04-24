@@ -68,6 +68,7 @@ public class Main {
 
 				Parser parser = new Parser(sInput);
 				TreeNode parserNodes = parser.microProgram();
+
 				AbstractSyntaxTree tree = new AbstractSyntaxTree(parserNodes);
 				AbstractSyntaxTree ast = tree.getAST();
 
@@ -90,7 +91,11 @@ public class Main {
 							+ parser.getMaxStackSize());
 				}
 
-				ast.evaluate(debug); //this evaluates the Micro program
+                if (!parserNodes.hasError()) {
+				    ast.evaluate(debug); //this evaluates the Micro program
+                } else {
+                    System.out.println("\nThere was an error during parsing. The program will not be evaluated.\n");
+                }
 			}
 		} else {
 			System.out.println("IO Error");
