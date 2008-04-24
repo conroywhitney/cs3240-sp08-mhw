@@ -1,3 +1,4 @@
+import java.io.*;
 
 public class AbstractSyntaxTree {
 	
@@ -59,6 +60,33 @@ public class AbstractSyntaxTree {
 	
 	public void evaluate()
 	{
-		root.evaluate();
+		VariableList identifiers = new VariableList();
+		boolean debug = false; //change this later
+		if(debug)
+		{
+			TreeNode curr = root.getChildren()[1].evalNext(identifiers);
+			
+			System.out.println(curr);
+			
+			while(curr != null)
+			{
+				//curr.getChildren()[0].evaluate(identifiers);
+				curr = curr.getChildren()[1].evalNext(identifiers);
+				System.out.println(identifiers.toString());
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				try
+				{
+				br.readLine();
+				}
+				catch(IOException ioe)
+				{
+					System.out.println(ioe.getMessage());
+				}
+			}
+		}
+		else
+		{
+			root.evaluate(identifiers);
+		}
 	}
 }
