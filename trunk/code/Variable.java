@@ -9,6 +9,10 @@ public class Variable {
 		identifier = id;
 		value = val;
 	}
+	
+	public Variable(String id) {
+		this(id, null);
+	}
 
 	public String getIdentifier() {
 		return identifier;
