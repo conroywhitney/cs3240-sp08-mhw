@@ -1,15 +1,15 @@
 import java.math.*;
+
 public class Variable {
-	
+
 	private String identifier;
 	private BigInteger value;
-	
-	public Variable(String id, BigInteger val)
-	{
+
+	public Variable(String id, BigInteger val) {
 		identifier = id;
 		value = val;
 	}
-	
+
 	public Variable(String id) {
 		this(id, null);
 	}
