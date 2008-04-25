@@ -31,12 +31,15 @@ public class AbstractSyntaxTree {
 		if (debug) {
 			TreeNode curr = root.getChildren()[1].evalNext(identifiers);
 			System.out.println(identifiers.toString());
-			Scanner scan = new Scanner(System.in);
+			//Scanner scan = new Scanner(System.in);
 
 			while ((curr != null)) {
-				while (!scan.hasNext()) {
+				/*while (!scan.hasNext()) {
 				} // Wait until user inputs any line before continuing
 				scan.next();
+				*/
+				System.console().readLine();
+			
 				curr = curr.evalNext(identifiers);
 				System.out.println(identifiers.toString());
 			}
