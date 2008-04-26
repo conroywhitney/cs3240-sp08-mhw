@@ -37,8 +37,35 @@ public class Parser {
         // always need to match "begin"
     	globalRootNode.addChild(match("begin", true));
         
-		// recursively add statementList and its children             
-        globalRootNode.addChild(statementList());
+		StatementList arrStatements = new StatementList();
+		TreeNode statementListNode = null;
+		TreeNode statementListPrimeNode = null;
+		boolean bHasStatementListPrime = false;
+
+		do {
+			bHasStatementListPrime = false;
+
+			statementListNode = new TreeNode("statementList");
+			statementListNode.addChild(statement());
+			arrStatements.add(statementListNode);
+
+			statementListPrimeNode = new TreeNode("statementListPrime");
+			if (statementListPrimeNode.addChild(match(";"))) {
+				bHasStatementListPrime = true;
+				arrStatements.add(statementListPrimeNode);
+			}
+			
+		} while (bHasStatementListPrime);
+
+		for (int i = arrStatements.size() - 2; i >= 0; i--) {
+			TreeNode lastNode = arrStatements.get(i+1);
+			TreeNode parentNode = arrStatements.get(i);
+			parentNode.addChild(lastNode);
+			arrStatements.set(i, parentNode);
+			arrStatements.set(i+1, null);
+		}
+
+		globalRootNode.addChild(arrStatements.get(0));
         
         // always need to match "end"
         globalRootNode.addChild(match("end", true));
