@@ -1,4 +1,5 @@
 begin
 ID := 3 * -4;
-ID1 := 3*-4
+ID1 := 3*-4;
+print (ID, ID1)
 end
