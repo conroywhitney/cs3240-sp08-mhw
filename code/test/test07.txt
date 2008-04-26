@@ -1,3 +1,7 @@
 begin
-ID1 := 5 * (3 + 4)
+ID1 := 5 * (3 + 4);
+ID2 := 6 * ( 3 + 1 );
+ID3 := ID2 - 8 - 5;
+print (ID1, ID2, ID3);
+print (35, 24, 11)
 end
