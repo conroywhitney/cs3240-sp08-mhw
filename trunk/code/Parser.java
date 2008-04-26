@@ -37,26 +37,47 @@ public class Parser {
         // always need to match "begin"
     	globalRootNode.addChild(match("begin", true));
         
+		// Because of the TA's test3 (big recursion), we need to find
+		// a better way to create our TreeNodes
+
+		// Create an ArrayList of statements
 		StatementList arrStatements = new StatementList();
+
+		// Keep track of a statementList Node
 		TreeNode statementListNode = null;
+		// And of a statementListPrime Node
 		TreeNode statementListPrimeNode = null;
+
+		// This is to check if we were able to find statementListPrime (or if end of program)
 		boolean bHasStatementListPrime = false;
 
 		do {
 			bHasStatementListPrime = false;
 
+			// Create the new statementList Node like usual
+			// Adding a statement Node to it
 			statementListNode = new TreeNode("statementList");
 			statementListNode.addChild(statement());
 			arrStatements.add(statementListNode);
 
+			// But instead of calling statementListPrime recurisvely
+			// Check to see if we can create our own statementListPrime node
+			// Adding the ";" node to it
 			statementListPrimeNode = new TreeNode("statementListPrime");
 			if (statementListPrimeNode.addChild(match(";"))) {
 				bHasStatementListPrime = true;
 				arrStatements.add(statementListPrimeNode);
 			}
 			
+			// If we had a statementListPrime, it wasn't end of prog so do again
 		} while (bHasStatementListPrime);
 
+		// Now for the cheeky part -- we have an ArrayList of
+		// TreeNodes but they're not parents of each other yet
+		
+		// Step through the ArrayList backwards
+		// Add the last (the child) to the second-to-last (the parent)
+		// Overwrite the parent, and erase the child from the ArrayList
 		for (int i = arrStatements.size() - 2; i >= 0; i--) {
 			TreeNode lastNode = arrStatements.get(i+1);
 			TreeNode parentNode = arrStatements.get(i);
@@ -65,6 +86,9 @@ public class Parser {
 			arrStatements.set(i+1, null);
 		}
 
+		// Now we are down to one TreeNode in the ArrayList
+		// And it has all the necessary children added to it
+		// Add this to the Global Root Node like usual
 		globalRootNode.addChild(arrStatements.get(0));
         
         // always need to match "end"
@@ -74,6 +98,7 @@ public class Parser {
         return globalRootNode;
     }
 
+/*
     // <statement-list> -> <statement> <statement-list'>
     public TreeNode statementList() {
     	//System.out.println("\nstatementList");
@@ -135,6 +160,7 @@ public class Parser {
         decrementStackCounter();
         return node;
     }
+*/
 
     // <statement> ->  print ( <exp-list> )
     // <statement> ->  ID := <exp>
