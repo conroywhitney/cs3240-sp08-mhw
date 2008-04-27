@@ -17,7 +17,19 @@ public class AbstractSyntaxTree {
 	 * syntax tree
 	 */
 	public AbstractSyntaxTree getAST() {
-		return new AbstractSyntaxTree(root.getAST());
+		TreeNode node = root.getAST();
+		TreeNode oldNode = new TreeNode("");
+		int count = 0;
+		
+		//System.out.println(new AbstractSyntaxTree(node).toString());
+		
+		while (!oldNode.equals(node)) {
+			oldNode = node.clone();
+			node = node.fixAST();
+			count++;
+		}
+		//System.out.println("Count: " + count);
+		return new AbstractSyntaxTree(node);
 	}
 
 	/*

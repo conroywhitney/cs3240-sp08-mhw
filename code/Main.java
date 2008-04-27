@@ -70,7 +70,7 @@ public class Main {
 				TreeNode parserNodes = parser.microProgram();
 
 				AbstractSyntaxTree tree = new AbstractSyntaxTree(parserNodes);
-				AbstractSyntaxTree ast = tree.getAST();
+				
 
 				if (printParse) {
 					System.out
@@ -79,6 +79,8 @@ public class Main {
 					System.out
 							.println("***********END PARSE TREE********************");
 				}
+				
+				AbstractSyntaxTree ast = tree.getAST();
 				if (printAST) {
 					System.out
 							.println("**************AST*********************");

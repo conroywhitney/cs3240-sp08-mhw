@@ -1,5 +1,3 @@
-import java.math.*;
-
 public class StatementList {
 
 	private TreeNode[] nodes;
