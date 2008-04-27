@@ -47,6 +47,22 @@ public class TreeNode {
 			children = temp;
 		}
 	}
+	
+	public void removeChild(int index)
+	{
+		TreeNode[] temp = new TreeNode[children.length - 1];
+		int t = 0;
+		for(int i = 0; i < children.length; i++)
+		{
+			if(i != index)
+			{
+				temp[t] = children[i];
+				t++;
+			}
+		}
+		
+		children = temp;
+	}
 
 	public String toString() {
 		String s = "( " + getDisplay() + " ";
@@ -297,6 +313,77 @@ public class TreeNode {
 		}
 
 		return s;
+	}
+	
+	public TreeNode fixAST() {
+		TreeNode root = this;
+		if(token.getValue().equals("+") || token.getValue().equals("-"))
+		{
+			
+			if(children[1].getToken().getValue().equals("+") || children[1].getToken().getValue().equals("-"))
+			{
+				
+				//for(int i = 0; i < root.children.length; i++)
+				//{
+				//	root.children[i] = root.children[i].fixAST();
+				//}
+				
+				TreeNode temp = this;
+				TreeNode child1 = temp.children[1];
+				TreeNode childLchild = child1.children[0];
+				temp.removeChild(1);
+				temp.addChild(childLchild);
+				child1.removeChild(0);
+				child1.addLeftChild(temp);
+				/*
+				TreeNode n = child1;
+				while(n.children.length > 0)
+				{
+					n = n.children[0];
+				}
+				n.addLeftChild(temp);
+				*/
+				root = child1;
+			}
+		} else {
+			for(int i = 0; i < children.length; i++)
+			{
+				children[i] = children[i].fixAST();
+			}
+		}
+		return root;
+	}
+	
+	public boolean equals(TreeNode n) {
+		boolean equal = true;
+		
+		if ((this == null || n == null) && !(this == null && n == null)) {
+			equal = false;
+		}
+		if (!label.equals(n.label) || !token.getValue().equals(n.getToken().getValue())) {
+			equal = false;
+		}
+		if (children.length == n.children.length) {
+			for (int i = 0; i < children.length; i++) {
+				if (!children[i].equals(n.children[i])) {
+					equal = false;
+					break;
+				}
+			}
+		}
+		else {
+			equal = false;
+		}
+		
+		return equal;
+	}
+	
+	public TreeNode clone() {
+		TreeNode n = new TreeNode(token, label);
+		for (int i = 0; i < children.length; i++) {
+			n.addChild(children[i].clone());
+		}
+		return n;
 	}
 
 	public String getLabel() {

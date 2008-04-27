@@ -6752,4 +6752,4 @@ x := x+2;
 x := x+2;
 x := x+2;
 print ( x - 8 , x + 1 , x ** 2 )
-ends
+end
